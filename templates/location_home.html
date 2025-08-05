@@ -1,0 +1,267 @@
+{% extends 'location_base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-to-r from-primary-blue to-light-blue text-white py-20">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <h1 class="text-5xl font-bold mb-6">{{ service_area.name }} Professional Plumbing Services</h1>
+        <p class="text-xl mb-8">24/7 Emergency Service • Licensed & Insured • Fast Response in {{ service_area.name }}</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'location_booking' service_area.slug %}" class="bg-white text-primary-blue px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+                Book Service Now
+            </a>
+            <a href="tel:{{ service_area.phone }}" class="bg-red-600 px-8 py-3 rounded-lg font-semibold hover:bg-red-700 transition">
+                <i class="fas fa-phone mr-2"></i>Emergency Call
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Trust Badges -->
+<section class="py-8 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex flex-wrap justify-center items-center gap-8">
+            {% for badge in trust_badges %}
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-{{ badge.icon }} text-primary-blue text-2xl"></i>
+                <span class="font-semibold text-gray-700">{{ badge.name }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Reviews Summary -->
+<section class="py-12 bg-gray-100">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <div class="flex justify-center items-center space-x-4 mb-6">
+            <div class="flex">
+                {% for i in "12345" %}
+                    {% if forloop.counter <= avg_rating %}
+                        <i class="fas fa-star text-yellow-400 text-2xl"></i>
+                    {% else %}
+                        <i class="far fa-star text-gray-300 text-2xl"></i>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <span class="text-3xl font-bold text-dark-blue">{{ avg_rating }}/5</span>
+        </div>
+        <p class="text-xl text-gray-600">Based on {{ total_reviews }} reviews from {{ service_area.name }} customers</p>
+        <div class="flex justify-center space-x-6 mt-4">
+            <div class="flex items-center space-x-2">
+                <i class="fab fa-google text-2xl text-blue-600"></i>
+                <span class="text-gray-600">Google</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <i class="fab fa-yelp text-2xl text-red-600"></i>
+                <span class="text-gray-600">Yelp</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-star text-2xl text-green-600"></i>
+                <span class="text-gray-600">Trustpilot</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <i class="fab fa-reddit text-2xl text-orange-600"></i>
+                <span class="text-gray-600">Reddit</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-16">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="text-center">
+                <div class="bg-primary-blue text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-clock text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">24/7 Emergency Service</h3>
+                <p class="text-gray-600">Available round the clock for all {{ service_area.name }} plumbing emergencies</p>
+            </div>
+            
+            <div class="text-center">
+                <div class="bg-primary-blue text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-certificate text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Licensed & Insured</h3>
+                <p class="text-gray-600">Fully licensed professionals serving {{ service_area.name }} with comprehensive insurance</p>
+            </div>
+            
+            <div class="text-center">
+                <div class="bg-primary-blue text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-tools text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Local {{ service_area.name }} Experts</h3>
+                <p class="text-gray-600">Experienced technicians who know {{ service_area.name }} plumbing systems</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Preview -->
+<section class="bg-gray-100 py-16">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-dark-blue mb-4">Our {{ service_area.name }} Services</h2>
+            <p class="text-gray-600">Comprehensive plumbing solutions for {{ service_area.name }} residents and businesses</p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for service in services %}
+            <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition overflow-hidden">
+                <div class="h-48 overflow-hidden">
+                    {% if service.name == 'Emergency Drain Cleaning' %}
+                        <img src="{% static 'images/drain-cleaning.webp' %}" alt="{{ service.name }}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-110">
+                    {% elif service.name == 'Burst Pipe Repair' %}
+                        <img src="{% static 'images/burstpip.jpg' %}" alt="{{ service.name }}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-110">
+                    {% elif service.name == 'Water Heater Emergency' %}
+                        <img src="{% static 'images/waterheater.webp' %}" alt="{{ service.name }}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-110">
+                    {% elif service.name == 'Toilet Installation' %}
+                        <img src="{% static 'images/toilet.jpg' %}" alt="{{ service.name }}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-110">
+                    {% elif service.name == 'Camera Inspection' %}
+                        <img src="{% static 'images/camerainspection.jpg' %}" alt="{{ service.name }}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-110">
+                    {% elif service.name == 'Faucet Repair & Installation' %}
+                        <img src="{% static 'images/faucetrepair1.jpg' %}" alt="{{ service.name }}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-110">
+                    {% elif service.name == 'Pipe Installation' %}
+                        <img src="{% static 'images/pipinstallation.webp' %}" alt="{{ service.name }}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-110">
+                    {% elif service.name == 'Sewer Line Cleaning' %}
+                        <img src="{% static 'images/sewerlinecleaning.jpg' %}" alt="{{ service.name }}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-110">
+                    {% elif service.name == 'Garbage Disposal Service' %}
+                        <img src="{% static 'images/garbagedisposal.jpg' %}" alt="{{ service.name }}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-110">
+                    {% elif service.name == 'Shower Repair' %}
+                        <img src="{% static 'images/showerrepair.jpg' %}" alt="{{ service.name }}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-110">
+                    {% else %}
+                        <img src="{% static 'images/drain-cleaning.webp' %}" alt="{{ service.name }}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-110">
+                    {% endif %}
+                </div>
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold mb-2">{{ service.name }}</h3>
+                    <p class="text-gray-600 text-sm mb-3">{{ service.description|truncatewords:15 }}</p>
+                    <p class="text-primary-blue font-semibold">{{ service.price_range }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-8">
+            <a href="{% url 'location_services' service_area.slug %}" class="bg-primary-blue text-white px-6 py-3 rounded-lg hover:bg-dark-blue transition">
+                View All {{ service_area.name }} Services
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="py-16">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-dark-blue mb-4">What {{ service_area.name }} Customers Say</h2>
+        </div>
+        
+        <div class="overflow-hidden">
+            <div class="flex animate-marquee">
+                {% for testimonial in testimonials %}
+                <div class="flex-shrink-0 w-80 mx-4">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="flex mb-4">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= testimonial.rating %}
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                {% else %}
+                                    <i class="far fa-star text-gray-300"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        {% if testimonial.title %}<h4 class="font-semibold text-dark-blue mb-2">{{ testimonial.title }}</h4>{% endif %}
+                        <p class="text-gray-600 mb-4">"{{ testimonial.comment }}"</p>
+                        <div class="flex justify-between items-center">
+                            <p class="font-semibold text-dark-blue">- {{ testimonial.customer_name }}</p>
+                            <p class="text-xs text-gray-400">{{ testimonial.created_at|date:"M d, Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Add Review Section -->
+        <div class="mt-12 max-w-2xl mx-auto">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-xl font-bold text-dark-blue mb-4">Share Your Experience</h3>
+                <form method="post" action="{% url 'location_home' service_area.slug %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="add_review">
+                    <div class="grid md:grid-cols-2 gap-4 mb-4">
+                        <input type="text" name="customer_name" placeholder="Your Name" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none">
+                        <input type="email" name="email" placeholder="Your Email" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none">
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4 mb-4">
+                        <select name="service" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none">
+                            <option value="">Select Service (Optional)</option>
+                            {% for service in services %}
+                            <option value="{{ service.id }}">{{ service.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <select name="rating" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none">
+                            <option value="">Select Rating</option>
+                            <option value="5">5 Stars - Excellent</option>
+                            <option value="4">4 Stars - Very Good</option>
+                            <option value="3">3 Stars - Good</option>
+                            <option value="2">2 Stars - Fair</option>
+                            <option value="1">1 Star - Poor</option>
+                        </select>
+                    </div>
+                    <input type="text" name="title" placeholder="Review Title (e.g., Great Service!)" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none mb-4">
+                    <textarea name="comment" placeholder="Tell us about your experience..." required rows="4" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none mb-4"></textarea>
+                    <button type="submit" class="bg-primary-blue text-white px-6 py-2 rounded hover:bg-dark-blue transition">
+                        Submit Review
+                    </button>
+                </form>
+                <!-- Success Messages -->
+                {% if messages %}
+                <div class="mt-4">
+                    {% for message in messages %}
+                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Map Section -->
+{% if service_area.map_embed %}
+<section class="py-16 bg-gray-100">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-dark-blue mb-4">Serving {{ service_area.name }}</h2>
+            <p class="text-gray-600">Find us and see our {{ service_area.name }} service area</p>
+        </div>
+        <div class="rounded-lg overflow-hidden shadow-lg">
+            {{ service_area.map_embed|safe }}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- CTA Section -->
+<section class="bg-primary-blue text-white py-16">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold mb-4">Need Plumbing Service in {{ service_area.name }}?</h2>
+        <p class="text-xl mb-8">Don't wait for small problems to become big ones. Contact your local {{ service_area.name }} plumbers today!</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'location_booking' service_area.slug %}" class="bg-white text-primary-blue px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+                Schedule Service
+            </a>
+            <a href="{% url 'location_contact' service_area.slug %}" class="border-2 border-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary-blue transition">
+                Get Free Quote
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

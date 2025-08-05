@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation - SPRO Plumbing</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            line-height: 1.6; 
+            color: #333; 
+            max-width: 600px; 
+            margin: 0 auto; 
+            padding: 20px;
+        }
+        .header { 
+            background: #1e40af; 
+            color: white; 
+            padding: 20px; 
+            text-align: center; 
+            border-radius: 5px 5px 0 0;
+        }
+        .content { 
+            background: #f9f9f9; 
+            padding: 30px; 
+            border-radius: 0 0 5px 5px;
+        }
+        .highlight { 
+            background: #e3f2fd; 
+            padding: 15px; 
+            border-left: 4px solid #1e40af; 
+            margin: 20px 0;
+        }
+        .footer { 
+            text-align: center; 
+            margin-top: 30px; 
+            color: #666; 
+            font-size: 12px;
+        }
+        .emergency { 
+            background: #ffebee; 
+            border: 1px solid #f44336; 
+            padding: 15px; 
+            border-radius: 5px; 
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔧 SPRO PLUMBING</h1>
+        <h2>Booking Confirmation</h2>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ booking.customer_name }},</p>
+        
+        <p>Thank you for choosing SPRO Plumbing! We've received your service request and will contact you soon to confirm the appointment details.</p>
+        
+        <div class="highlight">
+            <h3>📋 Booking Details</h3>
+            <p><strong>Service:</strong> {{ booking.service.name }}</p>
+            <p><strong>Location:</strong> {{ booking.service_area.name }}</p>
+            <p><strong>Preferred Date:</strong> {{ preferred_date_formatted }}</p>
+            <p><strong>Urgency:</strong> {{ booking.get_urgency_display }}</p>
+            <p><strong>Address:</strong> {{ booking.address }}</p>
+            {% if booking.description %}
+            <p><strong>Description:</strong> {{ booking.description }}</p>
+            {% endif %}
+        </div>
+        
+        {% if booking.service.is_emergency %}
+        <div class="emergency">
+            <h3>🚨 Emergency Service</h3>
+            <p>We understand this is urgent! Our team will prioritize your request and contact you within <strong>30 minutes</strong>.</p>
+            <p><strong>Emergency Hotline:</strong> <a href="tel:+16475518342">(647) 551-8342</a></p>
+        </div>
+        {% endif %}
+        
+        <h3>📞 What's Next?</h3>
+        <ul>
+            <li>Our team will call you at <strong>{{ booking.phone }}</strong> within 2 hours</li>
+            <li>We'll confirm the appointment time that works best for you</li>
+            <li>Our licensed technician will arrive on time with all necessary tools</li>
+            <li>You'll receive a follow-up call after the service for feedback</li>
+        </ul>
+        
+        <h3>💡 In the Meantime</h3>
+        <ul>
+            <li>Please ensure someone is available at the service address</li>
+            <li>Clear access to the affected area if possible</li>
+            <li>Have any relevant information ready about the issue</li>
+        </ul>
+        
+        <div class="highlight">
+            <h3>📍 {{ booking.service_area.name }} Contact Information</h3>
+            <p><strong>📞 Phone:</strong> <a href="tel:{{ booking.service_area.phone }}">{{ booking.service_area.phone }}</a></p>
+            <p><strong>📧 Email:</strong> <a href="mailto:{{ booking.service_area.email }}">{{ booking.service_area.email }}</a></p>
+            <p><strong>📍 Address:</strong> {{ booking.service_area.address|linebreaks }}</p>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>SPRO Plumbing - Professional Plumbing Services Across Ontario</p>
+        <p>Licensed & Insured | 24/7 Emergency Service</p>
+        <p>© 2024 SPRO Plumbing. All rights reserved.</p>
+    </div>
+</body>
+</html>

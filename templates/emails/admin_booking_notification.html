@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Booking - SPRO Plumbing Admin</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            line-height: 1.6; 
+            color: #333; 
+            max-width: 600px; 
+            margin: 0 auto; 
+            padding: 20px;
+        }
+        .header { 
+            background: #dc2626; 
+            color: white; 
+            padding: 20px; 
+            text-align: center; 
+            border-radius: 5px 5px 0 0;
+        }
+        .content { 
+            background: #f9f9f9; 
+            padding: 30px; 
+            border-radius: 0 0 5px 5px;
+        }
+        .emergency { 
+            background: #fef2f2; 
+            border: 2px solid #dc2626; 
+            padding: 15px; 
+            border-radius: 5px; 
+            margin: 20px 0;
+            text-align: center;
+        }
+        .customer-info { 
+            background: #e3f2fd; 
+            padding: 15px; 
+            border-left: 4px solid #1e40af; 
+            margin: 20px 0;
+        }
+        .admin-actions {
+            background: #f3e5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚨 NEW BOOKING ALERT</h1>
+        <h2>SPRO Plumbing Admin</h2>
+    </div>
+    
+    <div class="content">
+        {% if booking.service.is_emergency %}
+        <div class="emergency">
+            <h2>🚨 EMERGENCY SERVICE REQUEST 🚨</h2>
+            <p><strong>{{ booking.service.name }}</strong></p>
+            <p>⏰ Response Required: <strong>WITHIN 30 MINUTES</strong></p>
+        </div>
+        {% else %}
+        <h2>📋 New Service Booking</h2>
+        {% endif %}
+        
+        <div class="customer-info">
+            <h3>👤 Customer Information</h3>
+            <p><strong>Name:</strong> {{ booking.customer_name }}</p>
+            <p><strong>Phone:</strong> <a href="tel:{{ booking.phone }}">{{ booking.phone }}</a></p>
+            <p><strong>Email:</strong> <a href="mailto:{{ booking.email }}">{{ booking.email }}</a></p>
+            <p><strong>Location:</strong> {{ booking.service_area.name }}</p>
+            <p><strong>Address:</strong> {{ booking.address }}</p>
+        </div>
+        
+        <h3>🔧 Service Details</h3>
+        <ul>
+            <li><strong>Service:</strong> {{ booking.service.name }}</li>
+            <li><strong>Price Range:</strong> {{ booking.service.price_range }}</li>
+            <li><strong>Preferred Date:</strong> {{ preferred_date_formatted }}</li>
+            <li><strong>Urgency:</strong> {{ booking.get_urgency_display }}</li>
+            <li><strong>Submitted:</strong> {{ booking.created_at|date:"F d, Y g:i A" }}</li>
+        </ul>
+        
+        {% if booking.description %}
+        <h3>📝 Problem Description</h3>
+        <div style="background: white; padding: 15px; border-radius: 5px; border-left: 3px solid #dc2626;">
+            {{ booking.description|linebreaks }}
+        </div>
+        {% endif %}
+        
+        <div class="admin-actions">
+            <h3>✅ Required Actions</h3>
+            <ol>
+                <li><strong>Call customer immediately:</strong> <a href="tel:{{ booking.phone }}">{{ booking.phone }}</a></li>
+                <li>Confirm appointment time and technician availability</li>
+                <li>Send calendar invite with service details</li>
+                <li>Update booking status in admin panel</li>
+                {% if booking.service.is_emergency %}
+                <li><strong>⚡ EMERGENCY: Dispatch technician ASAP</strong></li>
+                {% endif %}
+            </ol>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <p style="font-size: 16px;">
+                <strong>📞 Customer Phone:</strong> 
+                <a href="tel:{{ booking.phone }}" style="color: #dc2626; font-size: 18px;">{{ booking.phone }}</a>
+            </p>
+        </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 30px; color: #666; font-size: 12px;">
+        <p>SPRO Plumbing Admin System - Booking ID: #{{ booking.id }}</p>
+        <p>Generated: {{ booking.created_at|date:"F d, Y g:i A T" }}</p>
+    </div>
+</body>
+</html>

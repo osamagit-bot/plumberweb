@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en" style="scroll-behavior: smooth;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SPRO Plumbing - Professional Plumbing Services{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-blue': '#1e40af',
+                        'light-blue': '#3b82f6',
+                        'dark-blue': '#1e3a8a',
+                    },
+                    animation: {
+                        'marquee': 'marquee 20s linear infinite',
+                    },
+                    keyframes: {
+                        marquee: {
+                            '0%': { transform: 'translateX(0%)' },
+                            '100%': { transform: 'translateX(-50%)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo -->
+                <div class="flex items-center mr-8 lg:mr-2">
+                    <i class="fas fa-wrench text-primary-blue text-xl md:text-2xl mr-2"></i>
+                    <span class="text-lg md:text-xl font-bold text-dark-blue whitespace-nowrap">SPRO PLUMBING</span>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex space-x-4 lg:space-x-6 items-center">
+                    <a href="{% url 'home' %}" class="text-gray-700 hover:text-primary-blue transition">Home</a>
+                    <a href="#features" class="text-gray-700 hover:text-primary-blue transition">Features</a>
+                    <div class="relative group">
+                        <a href="{% url 'services' %}" class="flex items-center text-gray-700 hover:text-primary-blue transition">
+                            Services
+                            <i class="fas fa-chevron-down ml-1 text-sm group-hover:rotate-180 transition-transform"></i>
+                        </a>
+                        <div class="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                            <div class="p-4">
+                                <div class="mb-3">
+                                    <h4 class="font-semibold text-red-600 mb-2">Emergency Services</h4>
+                                    <a href="{% url 'services' %}#emergency" class="block py-1 text-sm text-gray-600 hover:text-primary-blue">Emergency Drain Cleaning</a>
+                                    <a href="{% url 'services' %}#emergency" class="block py-1 text-sm text-gray-600 hover:text-primary-blue">Burst Pipe Repair</a>
+                                    <a href="{% url 'services' %}#emergency" class="block py-1 text-sm text-gray-600 hover:text-primary-blue">Water Heater Emergency</a>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-primary-blue mb-2">Regular Services</h4>
+                                    <a href="{% url 'services' %}#regular" class="block py-1 text-sm text-gray-600 hover:text-primary-blue">Toilet Installation</a>
+                                    <a href="{% url 'services' %}#regular" class="block py-1 text-sm text-gray-600 hover:text-primary-blue">Pipe Installation</a>
+                                    <a href="{% url 'services' %}#regular" class="block py-1 text-sm text-gray-600 hover:text-primary-blue">Faucet Repair</a>
+                                    <a href="{% url 'services' %}" class="block py-2 text-sm text-primary-blue font-semibold border-t mt-2 pt-2">View All Services →</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#service-areas" class="text-gray-700 hover:text-primary-blue transition">Locations</a>
+                    <a href="{% url 'gallery' %}" class="text-gray-700 hover:text-primary-blue transition">Gallery</a>
+                    <a href="#testimonials" class="text-gray-700 hover:text-primary-blue transition">Testimonials</a>
+                    <a href="#faq" class="text-gray-700 hover:text-primary-blue transition">FAQ</a>
+                    <a href="{% url 'contact' %}" class="text-gray-700 hover:text-primary-blue transition">Contact</a>
+                    <a href="{% url 'booking' %}" class="bg-gray-200 text-primary-blue font-semibold lg:w-28 px-4 py-2 rounded-lg hover:bg-primary-blue hover:text-white transition">Book Now</a>
+                </div>
+                
+                <!-- Desktop Emergency Button -->
+                <div class="hidden md:flex items-center ml-8 lg:ml-12">
+                    <a href="tel:+16475518342" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition whitespace-nowrap">
+                        <i class="fas fa-phone mr-2"></i>Emergency: (647) 551-8342
+                    </a>
+                </div>
+                
+                <!-- Mobile Right Section -->
+                <div class="flex items-center space-x-2 md:hidden">
+                    <!-- Mobile Emergency Button -->
+                    <a href="tel:+16475518342" class="bg-red-600 text-white px-2 py-2 rounded-lg hover:bg-red-700 transition text-xs whitespace-nowrap">
+                        <i class="fas fa-phone mr-1"></i>Emergency
+                    </a>
+                    
+                    <!-- Mobile menu button -->
+                    <button id="mobile-menu-btn" class="text-gray-700 p-2">
+                        <i id="mobile-menu-icon" class="fas fa-bars text-xl transition-transform"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile menu -->
+            <div id="mobile-menu" class="overflow-hidden transition-all duration-300 max-h-0 md:hidden pb-4">
+                <a href="{% url 'home' %}" class="block py-2 text-gray-700 hover:text-primary-blue">Home</a>
+                <a href="#features" class="block py-2 text-gray-700 hover:text-primary-blue">Features</a>
+                <div class="mobile-services-dropdown">
+                    <button onclick="toggleMobileServices()" class="w-full flex justify-between items-center py-2 text-gray-700 hover:text-primary-blue">
+                        Services
+                        <i id="mobile-services-icon" class="fas fa-chevron-down text-sm transition-transform"></i>
+                    </button>
+                    <div id="mobile-services-menu" class="overflow-hidden transition-all duration-300 max-h-0 ml-4">
+                        <div class="py-2">
+                            <p class="text-xs font-semibold text-red-600 mb-1">Emergency Services</p>
+                            <a href="{% url 'services' %}#emergency" class="block py-1 text-sm text-gray-600">Emergency Drain Cleaning</a>
+                            <a href="{% url 'services' %}#emergency" class="block py-1 text-sm text-gray-600">Burst Pipe Repair</a>
+                            <a href="{% url 'services' %}#emergency" class="block py-1 text-sm text-gray-600">Water Heater Emergency</a>
+                            <p class="text-xs font-semibold text-primary-blue mb-1 mt-2">Regular Services</p>
+                            <a href="{% url 'services' %}#regular" class="block py-1 text-sm text-gray-600">Toilet Installation</a>
+                            <a href="{% url 'services' %}#regular" class="block py-1 text-sm text-gray-600">Pipe Installation</a>
+                            <a href="{% url 'services' %}#regular" class="block py-1 text-sm text-gray-600">Faucet Repair</a>
+                            <a href="{% url 'services' %}" class="block py-1 text-sm text-primary-blue font-semibold">View All Services →</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="#service-areas" class="block py-2 text-gray-700 hover:text-primary-blue">Locations</a>
+                <a href="{% url 'gallery' %}" class="block py-2 text-gray-700 hover:text-primary-blue">Gallery</a>
+                <a href="#testimonials" class="block py-2 text-gray-700 hover:text-primary-blue">Testimonials</a>
+                <a href="#faq" class="block py-2 text-gray-700 hover:text-primary-blue">FAQ</a>
+                <a href="{% url 'contact' %}" class="block py-2 text-gray-700 hover:text-primary-blue">Contact</a>
+                <a href="{% url 'booking' %}" class="block py-2 bg-primary-blue text-white rounded-lg hover:bg-dark-blue transition mx-2 mt-2 text-center">Book Now</a>
+                
+                <!-- Mobile Emergency Contact -->
+                <div class="border-t mt-4 pt-4 mx-2">
+                    <p class="text-sm font-semibold text-red-600 mb-2">24/7 Emergency Service</p>
+                    <a href="tel:+16475518342" class="block py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-center">
+                        <i class="fas fa-phone mr-2"></i>(647) 551-8342
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-20">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark-blue text-white py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-wrench text-2xl mr-2"></i>
+                        <span class="text-2xl font-bold">SPRO PLUMBING</span>
+                    </div>
+                    <p class="text-gray-300">Professional plumbing services available 24/7. Licensed, insured, and trusted by thousands of customers.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Services</h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li>Emergency Repairs</li>
+                        <li>Drain Cleaning</li>
+                        <li>Water Heater Service</li>
+                        <li>Pipe Installation</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact Info</h3>
+                    <div class="space-y-2 text-gray-300">
+                        <p><i class="fas fa-phone mr-2"></i><a href="tel:+16475518342" class="hover:text-white">(647) 551-8342</a></p>
+                        <p><i class="fab fa-whatsapp mr-2"></i><a href="https://wa.me/16475122111" class="hover:text-white">(647) 512-2111</a></p>
+                        <p><i class="fas fa-envelope mr-2"></i>info@sproplumbing.com</p>
+                        <p><i class="fas fa-map-marker-alt mr-2"></i>3380 Eglinton Ave E<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unit 906, Toronto, ON</p>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Follow Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-facebook text-xl"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-twitter text-xl"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-instagram text-xl"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-600 mt-8 pt-8 text-center text-gray-300 relative">
+                <p>&copy; 2024 SPRO PLUMBING. All rights reserved. Licensed & Insured.<br> Developed By: Osama Noorani</p>
+                <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="absolute right-0 top-8 bg-gray-300 text-dark-blue w-12 h-12 rounded-full flex items-center justify-center hover:bg-gray-400 transition">
+                    <i class="fas fa-arrow-up text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('mobile-menu-icon');
+            
+            if (menu.style.maxHeight === '0px' || !menu.style.maxHeight) {
+                menu.style.maxHeight = '700px';
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                menu.style.maxHeight = '0px';
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+        
+        // Mobile services dropdown toggle
+        function toggleMobileServices() {
+            const menu = document.getElementById('mobile-services-menu');
+            const icon = document.getElementById('mobile-services-icon');
+            
+            if (menu.style.maxHeight === '0px' || !menu.style.maxHeight) {
+                menu.style.maxHeight = '300px';
+                icon.classList.add('rotate-180');
+            } else {
+                menu.style.maxHeight = '0px';
+                icon.classList.remove('rotate-180');
+            }
+        }
+        
+        // FAQ toggle function
+        function toggleFAQ(id) {
+            const answer = document.getElementById('answer-' + id);
+            const icon = document.getElementById('icon-' + id);
+            
+            if (answer.style.maxHeight === '0px' || !answer.style.maxHeight) {
+                answer.style.maxHeight = answer.scrollHeight + 'px';
+                icon.classList.add('rotate-180');
+            } else {
+                answer.style.maxHeight = '0px';
+                icon.classList.remove('rotate-180');
+            }
+        }
+        
+        // Hero slideshow
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.hero-slide');
+        const indicators = document.querySelectorAll('.slide-indicator');
+        
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.style.opacity = i === index ? '1' : '0';
+            });
+            indicators.forEach((indicator, i) => {
+                indicator.style.opacity = i === index ? '1' : '0.5';
+            });
+        }
+        
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+        
+        // Auto-advance slides every 5 seconds
+        if (slides.length > 0) {
+            setInterval(nextSlide, 5000);
+            
+            // Indicator click handlers
+            indicators.forEach((indicator, index) => {
+                indicator.addEventListener('click', () => {
+                    currentSlide = index;
+                    showSlide(currentSlide);
+                });
+            });
+        }
+        
+
+        
+
+
+
+        
+        // Service Areas Search
+        const areaSearch = document.getElementById('area-search');
+        const noResults = document.getElementById('no-results');
+        if (areaSearch) {
+            areaSearch.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const areaCards = document.querySelectorAll('.area-card');
+                let visibleCount = 0;
+                
+                areaCards.forEach(card => {
+                    const areaName = card.getAttribute('data-name');
+                    if (areaName.includes(searchTerm)) {
+                        card.style.opacity = '1';
+                        card.style.transform = 'scale(1)';
+                        card.style.display = 'block';
+                        visibleCount++;
+                    } else {
+                        card.style.opacity = '0';
+                        card.style.transform = 'scale(0.8)';
+                        setTimeout(() => {
+                            if (card.style.opacity === '0') {
+                                card.style.display = 'none';
+                            }
+                        }, 300);
+                    }
+                });
+                
+                // Show/hide no results message
+                if (visibleCount === 0 && searchTerm.length > 0) {
+                    noResults.classList.remove('hidden');
+                } else {
+                    noResults.classList.add('hidden');
+                }
+            });
+        }
+    </script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+    </script>
+</body>
+</html>

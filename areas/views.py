@@ -1,0 +1,167 @@
+from django.shortcuts import render, get_object_or_404
+from django.http import Http404
+from django.utils.text import slugify
+from .models import ServiceArea, Review, TrustBadge
+from services.models import Service, Testimonial
+from bookings.models import Booking, ContactMessage
+from django.contrib import messages
+from django.shortcuts import redirect
+from core.email_utils import (
+    send_booking_confirmation_email, 
+    send_contact_confirmation_email,
+    send_admin_booking_notification,
+    send_admin_contact_notification
+)
+
+def get_service_area_by_slug(location_slug):
+    """Find ServiceArea by matching slugified name"""
+    for area in ServiceArea.objects.filter(is_active=True):
+        if slugify(area.name) == location_slug:
+            return area
+    raise Http404("Service area not found")
+
+def location_home(request, location_slug=None):
+    if location_slug:
+        service_area = get_service_area_by_slug(location_slug)
+    else:
+        service_area = ServiceArea.objects.filter(is_active=True).first()
+    
+    if request.method == 'POST' and request.POST.get('action') == 'add_review':
+        service_id = request.POST.get('service')
+        service_obj = None
+        if service_id:
+            try:
+                service_obj = Service.objects.get(id=service_id)
+            except Service.DoesNotExist:
+                pass
+        
+        testimonial = Testimonial(
+            customer_name=request.POST['customer_name'],
+            email=request.POST['email'],
+            rating=int(request.POST['rating']),
+            title=request.POST['title'],
+            comment=request.POST['comment'],
+            location=service_area,
+            service=service_obj
+        )
+        testimonial.save()
+        messages.success(request, f'Thank you for your review! Your feedback helps other {service_area.name} customers.')
+        return redirect('location_home', location_slug=slugify(service_area.name))
+    
+    services = Service.objects.all()[:4]
+    testimonials = Testimonial.objects.filter(location=service_area)
+    reviews = Review.objects.filter(service_area=service_area, is_featured=True)[:3] if service_area else []
+    trust_badges = TrustBadge.objects.filter(is_active=True)
+    
+    # Calculate average rating
+    avg_rating = 0
+    total_reviews = Review.objects.filter(service_area=service_area).count() if service_area else 0
+    if total_reviews > 0:
+        avg_rating = sum([r.rating for r in Review.objects.filter(service_area=service_area)]) / total_reviews
+    
+    # Add slug to service_area for template URLs
+    if service_area:
+        service_area.slug = slugify(service_area.name)
+    
+    context = {
+        'service_area': service_area,
+        'services': services,
+        'testimonials': testimonials,
+        'reviews': reviews,
+        'trust_badges': trust_badges,
+        'avg_rating': round(avg_rating, 1),
+        'total_reviews': total_reviews,
+    }
+    return render(request, 'location_home.html', context)
+
+def location_services(request, location_slug):
+    service_area = get_service_area_by_slug(location_slug)
+    services = Service.objects.all()
+    emergency_services = Service.objects.filter(is_emergency=True)
+    regular_services = Service.objects.filter(is_emergency=False)
+    
+    # Add slug to service_area for template URLs
+    if service_area:
+        service_area.slug = slugify(service_area.name)
+    
+    context = {
+        'service_area': service_area,
+        'services': services,
+        'emergency_services': emergency_services,
+        'regular_services': regular_services,
+    }
+    return render(request, 'location_services.html', context)
+
+def location_booking(request, location_slug):
+    service_area = get_service_area_by_slug(location_slug)
+    
+    if request.method == 'POST':
+        booking = Booking(
+            customer_name=request.POST['customer_name'],
+            email=request.POST['email'],
+            phone=request.POST['phone'],
+            address=request.POST['address'],
+            service_id=request.POST['service'],
+            service_area=service_area,
+            urgency=request.POST['urgency'],
+            preferred_date=request.POST['preferred_date'],
+            description=request.POST['description']
+        )
+        booking.save()
+        
+        # Send confirmation email to customer
+        email_sent = send_booking_confirmation_email(booking)
+        
+        # Send notification to admin
+        admin_notified = send_admin_booking_notification(booking)
+        
+        if email_sent:
+            messages.success(request, f'Booking request submitted for {service_area.name}! Check your email for confirmation. We will contact you soon.')
+        else:
+            messages.success(request, f'Booking request submitted for {service_area.name}! We will contact you soon.')
+        return redirect('location_booking', location_slug=slugify(service_area.name))
+    
+    services = Service.objects.all()
+    
+    # Add slug to service_area for template URLs
+    if service_area:
+        service_area.slug = slugify(service_area.name)
+    
+    context = {
+        'service_area': service_area,
+        'services': services
+    }
+    return render(request, 'location_booking.html', context)
+
+def location_contact(request, location_slug):
+    service_area = get_service_area_by_slug(location_slug)
+    
+    if request.method == 'POST':
+        contact_message = ContactMessage(
+            name=request.POST['name'],
+            email=request.POST['email'],
+            phone=request.POST.get('phone', ''),
+            subject=request.POST['subject'],
+            message=request.POST['message'],
+            service_area=service_area
+        )
+        contact_message.save()
+        
+        # Send confirmation email to customer
+        email_sent = send_contact_confirmation_email(contact_message)
+        
+        # Send notification to admin
+        admin_notified = send_admin_contact_notification(contact_message)
+        
+        if email_sent:
+            messages.success(request, f'Message sent successfully from {service_area.name}! Check your email for confirmation. We will get back to you soon.')
+        else:
+            messages.success(request, f'Message sent successfully from {service_area.name}! We will get back to you soon.')
+        return redirect('location_contact', location_slug=slugify(service_area.name))
+    
+    # Add slug to service_area for template URLs
+    if service_area:
+        service_area.slug = slugify(service_area.name)
+    
+    context = {'service_area': service_area}
+    return render(request, 'location_contact.html', context)

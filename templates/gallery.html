@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+{% block title %}Gallery - SPRO Plumbing{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="bg-gradient-to-r from-primary-blue to-light-blue text-white py-16">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <h1 class="text-4xl font-bold mb-4">Our Work Gallery</h1>
+        <p class="text-xl">See the quality of our plumbing services and satisfied customers</p>
+    </div>
+</section>
+
+<!-- Featured Images Section -->
+{% if featured_images %}
+<section class="py-12 bg-gray-100">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-dark-blue mb-4">Featured Work</h2>
+            <p class="text-gray-600">Showcasing our best plumbing projects and satisfied customers</p>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-6">
+            {% for image in featured_images %}
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                <div class="aspect-w-16 aspect-h-12 relative overflow-hidden">
+                    <img src="{{ image.image.url }}" alt="{{ image.title }}" 
+                         class="w-full h-64 object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
+                         onclick="openModal('{{ image.image.url }}', '{{ image.title }}', '{{ image.description|escapejs }}')">
+                </div>
+                <div class="p-4">
+                    <h3 class="font-semibold text-lg mb-2">{{ image.title }}</h3>
+                    {% if image.description %}
+                        <p class="text-gray-600 text-sm mb-2">{{ image.description|truncatewords:15 }}</p>
+                    {% endif %}
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-primary-blue text-white px-2 py-1 rounded text-xs">{{ image.get_category_display }}</span>
+                        {% if image.service %}
+                            <span class="bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs">{{ image.service.name }}</span>
+                        {% endif %}
+                        {% if image.location %}
+                            <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">{{ image.location.name }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Filters Section -->
+<section class="py-8 bg-white border-b">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex flex-wrap gap-4 justify-center">
+            <!-- Category Filter -->
+            <div class="flex flex-wrap gap-2">
+                <span class="text-sm font-semibold text-gray-700 mr-2">Category:</span>
+                <a href="?category=all&service={{ current_service }}&location={{ current_location }}" 
+                   class="px-3 py-1 rounded-full text-sm transition {% if current_category == 'all' %}bg-primary-blue text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+                    All
+                </a>
+                {% for category_key, category_name in categories %}
+                <a href="?category={{ category_key }}&service={{ current_service }}&location={{ current_location }}" 
+                   class="px-3 py-1 rounded-full text-sm transition {% if current_category == category_key %}bg-primary-blue text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+                    {{ category_name }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="flex flex-wrap gap-4 justify-center mt-4">
+            <!-- Service Filter -->
+            <div class="flex flex-wrap gap-2">
+                <span class="text-sm font-semibold text-gray-700 mr-2">Service:</span>
+                <a href="?category={{ current_category }}&service=all&location={{ current_location }}" 
+                   class="px-3 py-1 rounded-full text-sm transition {% if current_service == 'all' %}bg-green-600 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+                    All Services
+                </a>
+                {% for service in services %}
+                <a href="?category={{ current_category }}&service={{ service.id }}&location={{ current_location }}" 
+                   class="px-3 py-1 rounded-full text-sm transition {% if current_service == service.id|stringformat:'s' %}bg-green-600 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+                    {{ service.name }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="flex flex-wrap gap-4 justify-center mt-4">
+            <!-- Location Filter -->
+            <div class="flex flex-wrap gap-2">
+                <span class="text-sm font-semibold text-gray-700 mr-2">Location:</span>
+                <a href="?category={{ current_category }}&service={{ current_service }}&location=all" 
+                   class="px-3 py-1 rounded-full text-sm transition {% if current_location == 'all' %}bg-orange-600 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+                    All Locations
+                </a>
+                {% for location in locations %}
+                <a href="?category={{ current_category }}&service={{ current_service }}&location={{ location.id }}" 
+                   class="px-3 py-1 rounded-full text-sm transition {% if current_location == location.id|stringformat:'s' %}bg-orange-600 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+                    {{ location.name }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Gallery Grid -->
+<section class="py-12">
+    <div class="max-w-7xl mx-auto px-4">
+        {% if images %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {% for image in images %}
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <div class="aspect-w-16 aspect-h-12 relative overflow-hidden">
+                        <img src="{{ image.image.url }}" alt="{{ image.title }}" 
+                             class="w-full h-48 object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
+                             onclick="openModal('{{ image.image.url }}', '{{ image.title }}', '{{ image.description|escapejs }}')">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold mb-2">{{ image.title }}</h3>
+                        {% if image.description %}
+                            <p class="text-gray-600 text-sm mb-2">{{ image.description|truncatewords:10 }}</p>
+                        {% endif %}
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-primary-blue text-white px-2 py-1 rounded text-xs">{{ image.get_category_display }}</span>
+                            {% if image.service %}
+                                <span class="bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs">{{ image.service.name }}</span>
+                            {% endif %}
+                            {% if image.location %}
+                                <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">{{ image.location.name }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-12">
+                <i class="fas fa-images text-6xl text-gray-300 mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-600 mb-2">No images found</h3>
+                <p class="text-gray-500">Try adjusting your filters or check back later for new gallery images.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="bg-primary-blue text-white py-12">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold mb-4">Ready for Quality Plumbing Work?</h2>
+        <p class="text-xl mb-8">Join our satisfied customers and experience professional plumbing services</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'booking' %}" class="bg-white text-primary-blue px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+                <i class="fas fa-calendar-check mr-2"></i>Book Service
+            </a>
+            <a href="{% url 'contact' %}" class="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary-blue transition">
+                <i class="fas fa-phone mr-2"></i>Get Quote
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Image Modal -->
+<div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+    <div class="max-w-4xl max-h-full p-4 relative">
+        <button onclick="closeModal()" class="absolute top-2 right-2 text-white text-2xl hover:text-gray-300 z-10">
+            <i class="fas fa-times"></i>
+        </button>
+        <img id="modalImage" src="" alt="" class="max-w-full max-h-full object-contain">
+        <div class="bg-white p-4 mt-2 rounded">
+            <h3 id="modalTitle" class="font-semibold text-lg mb-2"></h3>
+            <p id="modalDescription" class="text-gray-600"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+function openModal(imageSrc, title, description) {
+    document.getElementById('modalImage').src = imageSrc;
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalDescription').textContent = description;
+    document.getElementById('imageModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+    document.getElementById('imageModal').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+
+// Close modal when clicking outside the image
+document.getElementById('imageModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeModal();
+    }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeModal();
+    }
+});
+</script>
+{% endblock %}
