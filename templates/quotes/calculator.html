@@ -1,0 +1,291 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Quote Calculator - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold text-center mb-8">Get an Instant Quote</h1>
+    
+    <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8">
+        <form id="quote-form">
+            <!-- Service Selection -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-2">Select Service</label>
+                <select id="service-select" class="w-full p-3 border rounded-lg" required>
+                    <option value="">Choose a service...</option>
+                    {% for service in services %}
+                    <option value="{{ service.id }}">{{ service.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <!-- Service Options -->
+            <div id="service-options" class="mb-6 overflow-hidden transition-all duration-500 ease-in-out" style="max-height: 0; opacity: 0;">
+                <label class="block text-sm font-medium mb-2">Additional Options</label>
+                <div id="options-container"></div>
+            </div>
+            
+            <!-- Price Breakdown -->
+            <div id="price-breakdown" class="mb-6 overflow-hidden transition-all duration-500 ease-in-out" style="max-height: 0; opacity: 0;">
+                <h3 class="text-lg font-semibold mb-3">Price Breakdown</h3>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="flex justify-between mb-2">
+                        <span>Base Service:</span>
+                        <span id="base-price">$0</span>
+                    </div>
+                    <div class="flex justify-between mb-2">
+                        <span>Labor (<span id="labor-hours">0</span> hours):</span>
+                        <span id="labor-cost">$0</span>
+                    </div>
+                    <div id="options-cost-container"></div>
+                    <hr class="my-2">
+                    <div class="flex justify-between font-bold text-lg">
+                        <span>Estimated Total:</span>
+                        <span id="total-price">$0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Customer Information -->
+            <div id="customer-info" class="overflow-hidden transition-all duration-500 ease-in-out" style="max-height: 0; opacity: 0;">
+                <h3 class="text-lg font-semibold mb-3">Your Information</h3>
+                <div class="grid md:grid-cols-2 gap-4 mb-4">
+                    <input type="text" id="customer-name" placeholder="Full Name" class="p-3 border rounded-lg" required>
+                    <input type="email" id="customer-email" placeholder="Email" class="p-3 border rounded-lg" required>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4 mb-4">
+                    <input type="tel" id="customer-phone" placeholder="Phone Number" class="p-3 border rounded-lg" required>
+                    <input type="text" id="customer-address" placeholder="Service Address" class="p-3 border rounded-lg" required>
+                </div>
+                <textarea id="customer-notes" placeholder="Additional notes or requirements..." class="w-full p-3 border rounded-lg" rows="3"></textarea>
+            </div>
+            
+            <button type="submit" id="submit-quote" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50" disabled>
+                Get Quote
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div id="success-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg p-8 max-w-md mx-4 transform transition-all duration-300 scale-95 opacity-0" id="modal-content">
+        <div class="text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                <i class="fas fa-check text-green-600 text-xl"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Quote Request Submitted!</h3>
+            <p class="text-sm text-gray-500 mb-6">Thank you for your request. We'll contact you within 24 hours with a detailed quote.</p>
+            <button onclick="closeSuccessModal()" class="w-full bg-primary-blue text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Spinner -->
+<div id="loading-spinner" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg p-8">
+        <div class="flex items-center">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-blue mr-3"></div>
+            <span>Submitting your quote request...</span>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentCalculator = null;
+let selectedOptions = [];
+
+document.getElementById('service-select').addEventListener('change', function() {
+    const serviceId = this.value;
+    if (serviceId) {
+        loadCalculator(serviceId);
+    } else {
+        hideCalculator();
+    }
+});
+
+async function loadCalculator(serviceId) {
+    try {
+        const response = await fetch(`/quotes/api/calculator/${serviceId}/`);
+        currentCalculator = await response.json();
+        showCalculator();
+        updatePrice();
+    } catch (error) {
+        console.error('Error loading calculator:', error);
+    }
+}
+
+function showCalculator() {
+    // Smooth animations for showing sections
+    setTimeout(() => {
+        const serviceOptions = document.getElementById('service-options');
+        serviceOptions.style.maxHeight = '500px';
+        serviceOptions.style.opacity = '1';
+    }, 100);
+    
+    setTimeout(() => {
+        const priceBreakdown = document.getElementById('price-breakdown');
+        priceBreakdown.style.maxHeight = '400px';
+        priceBreakdown.style.opacity = '1';
+    }, 300);
+    
+    setTimeout(() => {
+        const customerInfo = document.getElementById('customer-info');
+        customerInfo.style.maxHeight = '600px';
+        customerInfo.style.opacity = '1';
+        document.getElementById('submit-quote').disabled = false;
+    }, 500);
+    
+    // Populate options
+    const container = document.getElementById('options-container');
+    container.innerHTML = '';
+    
+    currentCalculator.options.forEach(option => {
+        const div = document.createElement('div');
+        div.className = 'flex items-center mb-2';
+        div.innerHTML = `
+            <input type="checkbox" id="option-${option.id}" value="${option.id}" 
+                   class="mr-2" ${option.required ? 'checked disabled' : ''}>
+            <label for="option-${option.id}" class="flex-1">
+                ${option.name} - $${option.price.toFixed(2)}
+                <span class="text-sm text-gray-600 block">${option.description}</span>
+            </label>
+        `;
+        container.appendChild(div);
+        
+        const checkbox = div.querySelector('input');
+        checkbox.addEventListener('change', updatePrice);
+        
+        if (option.required) {
+            selectedOptions.push(option.id);
+        }
+    });
+}
+
+function hideCalculator() {
+    const sections = ['service-options', 'price-breakdown', 'customer-info'];
+    sections.forEach(id => {
+        const element = document.getElementById(id);
+        element.style.maxHeight = '0';
+        element.style.opacity = '0';
+    });
+    document.getElementById('submit-quote').disabled = true;
+}
+
+function showSuccessModal() {
+    const modal = document.getElementById('success-modal');
+    const content = document.getElementById('modal-content');
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        content.classList.remove('scale-95', 'opacity-0');
+        content.classList.add('scale-100', 'opacity-100');
+    }, 10);
+}
+
+function closeSuccessModal() {
+    const modal = document.getElementById('success-modal');
+    const content = document.getElementById('modal-content');
+    content.classList.remove('scale-100', 'opacity-100');
+    content.classList.add('scale-95', 'opacity-0');
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 300);
+}
+
+function showLoading() {
+    document.getElementById('loading-spinner').classList.remove('hidden');
+}
+
+function hideLoading() {
+    document.getElementById('loading-spinner').classList.add('hidden');
+}
+
+function updatePrice() {
+    if (!currentCalculator) return;
+    
+    // Get selected options
+    selectedOptions = [];
+    document.querySelectorAll('#options-container input:checked').forEach(checkbox => {
+        selectedOptions.push(parseInt(checkbox.value));
+    });
+    
+    // Calculate totals
+    const basePrice = currentCalculator.base_price;
+    const laborCost = currentCalculator.labor_rate * currentCalculator.estimated_hours;
+    let optionsCost = 0;
+    
+    const optionsCostContainer = document.getElementById('options-cost-container');
+    optionsCostContainer.innerHTML = '';
+    
+    selectedOptions.forEach(optionId => {
+        const option = currentCalculator.options.find(o => o.id === optionId);
+        if (option) {
+            optionsCost += option.price;
+            const div = document.createElement('div');
+            div.className = 'flex justify-between mb-1';
+            div.innerHTML = `<span>${option.name}:</span><span>$${option.price.toFixed(2)}</span>`;
+            optionsCostContainer.appendChild(div);
+        }
+    });
+    
+    const total = basePrice + laborCost + optionsCost;
+    
+    // Update display
+    document.getElementById('base-price').textContent = `$${basePrice.toFixed(2)}`;
+    document.getElementById('labor-hours').textContent = currentCalculator.estimated_hours;
+    document.getElementById('labor-cost').textContent = `$${laborCost.toFixed(2)}`;
+    document.getElementById('total-price').textContent = `$${total.toFixed(2)}`;
+}
+
+document.getElementById('quote-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const serviceId = document.getElementById('service-select').value;
+    const total = parseFloat(document.getElementById('total-price').textContent.replace('$', ''));
+    
+    const data = {
+        service_id: parseInt(serviceId),
+        customer_name: document.getElementById('customer-name').value,
+        email: document.getElementById('customer-email').value,
+        phone: document.getElementById('customer-phone').value,
+        address: document.getElementById('customer-address').value,
+        selected_options: selectedOptions,
+        estimated_total: total,
+        notes: document.getElementById('customer-notes').value,
+    };
+    
+    try {
+        showLoading();
+        const response = await fetch('/quotes/api/submit/', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        hideLoading();
+        
+        if (result.success) {
+            showSuccessModal();
+            this.reset();
+            hideCalculator();
+            selectedOptions = [];
+            currentCalculator = null;
+        } else {
+            throw new Error('Submission failed');
+        }
+    } catch (error) {
+        hideLoading();
+        // Show error modal or notification
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'fixed top-4 right-4 bg-red-500 text-white p-4 rounded-lg shadow-lg z-50';
+        errorDiv.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i>Error submitting quote. Please try again.';
+        document.body.appendChild(errorDiv);
+        setTimeout(() => errorDiv.remove(), 5000);
+    }
+});
+</script>
+{% endblock %}

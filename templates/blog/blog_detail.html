@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ post.meta_title }} - {{ block.super }}{% endblock %}
+{% block meta_description %}{{ post.meta_description }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <article class="max-w-4xl mx-auto">
+        <header class="mb-8">
+            <span class="text-blue-600 font-semibold">{{ post.get_category_display }}</span>
+            <h1 class="text-4xl font-bold mt-2 mb-4">{{ post.title }}</h1>
+            <div class="flex items-center gap-4 text-gray-600 mb-6">
+                <span>{{ post.created_at|date:"F d, Y" }}</span>
+                <span>•</span>
+                <span>{{ post.views }} views</span>
+                {% if post.tags %}
+                <span>•</span>
+                <div class="flex gap-2">
+                    {% for tag in post.get_tags_list %}
+                    <span class="bg-gray-100 px-2 py-1 rounded text-sm">#{{ tag }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% if post.featured_image %}
+            <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="w-full h-64 object-cover rounded-lg">
+            {% endif %}
+        </header>
+        
+        <div class="prose max-w-none">
+            {{ post.content|linebreaks }}
+        </div>
+        
+        {% if post.related_service %}
+        <div class="mt-8 p-6 bg-blue-50 rounded-lg">
+            <h3 class="text-xl font-bold mb-2">Need Professional Help?</h3>
+            <p class="mb-4">If you need assistance with {{ post.related_service.name|lower }}, our licensed plumbers are here to help.</p>
+            <a href="{% url 'booking' %}" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Book Service Now</a>
+        </div>
+        {% endif %}
+    </article>
+    
+    {% if related_posts %}
+    <div class="max-w-4xl mx-auto mt-12">
+        <h2 class="text-2xl font-bold mb-6">Related Articles</h2>
+        <div class="grid md:grid-cols-3 gap-6">
+            {% for related_post in related_posts %}
+            <article class="bg-white rounded-lg shadow-md overflow-hidden">
+                {% if related_post.featured_image %}
+                <img src="{{ related_post.featured_image.url }}" alt="{{ related_post.title }}" class="w-full h-32 object-cover">
+                {% endif %}
+                <div class="p-4">
+                    <h3 class="font-bold mb-2"><a href="{{ related_post.get_absolute_url }}" class="hover:text-blue-600">{{ related_post.title }}</a></h3>
+                    <p class="text-sm text-gray-600">{{ related_post.excerpt|truncatewords:15 }}</p>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

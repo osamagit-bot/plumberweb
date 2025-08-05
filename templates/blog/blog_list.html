@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Plumbing Tips & Guides - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold text-center mb-8">Plumbing Tips & Guides</h1>
+    
+    <!-- Search and Filter -->
+    <div class="mb-8 flex flex-wrap gap-4">
+        <form method="GET" class="flex gap-2">
+            <input type="text" name="search" value="{{ search_query }}" placeholder="Search articles..." class="px-4 py-2 border rounded">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Search</button>
+        </form>
+        
+        <div class="flex gap-2">
+            <a href="{% url 'blog_list' %}" class="px-4 py-2 border rounded {% if not current_category %}bg-blue-600 text-white{% endif %}">All</a>
+            {% for key, value in categories %}
+                <a href="?category={{ key }}" class="px-4 py-2 border rounded {% if current_category == key %}bg-blue-600 text-white{% endif %}">{{ value }}</a>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Featured Posts -->
+    {% if featured_posts and not current_category and not search_query %}
+    <div class="mb-12">
+        <h2 class="text-2xl font-bold mb-6">Featured Articles</h2>
+        <div class="grid md:grid-cols-3 gap-6">
+            {% for post in featured_posts %}
+            <article class="bg-white rounded-lg shadow-md overflow-hidden">
+                {% if post.featured_image %}
+                <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="w-full h-48 object-cover">
+                {% endif %}
+                <div class="p-6">
+                    <span class="text-sm text-blue-600 font-semibold">{{ post.get_category_display }}</span>
+                    <h3 class="text-xl font-bold mt-2 mb-3"><a href="{{ post.get_absolute_url }}" class="hover:text-blue-600">{{ post.title }}</a></h3>
+                    <p class="text-gray-600 mb-4">{{ post.excerpt }}</p>
+                    <div class="text-sm text-gray-500">{{ post.created_at|date:"M d, Y" }} • {{ post.views }} views</div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Blog Posts -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for post in posts %}
+        <article class="bg-white rounded-lg shadow-md overflow-hidden">
+            {% if post.featured_image %}
+            <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="w-full h-48 object-cover">
+            {% endif %}
+            <div class="p-6">
+                <span class="text-sm text-blue-600 font-semibold">{{ post.get_category_display }}</span>
+                <h3 class="text-xl font-bold mt-2 mb-3"><a href="{{ post.get_absolute_url }}" class="hover:text-blue-600">{{ post.title }}</a></h3>
+                <p class="text-gray-600 mb-4">{{ post.excerpt }}</p>
+                <div class="text-sm text-gray-500">{{ post.created_at|date:"M d, Y" }} • {{ post.views }} views</div>
+            </div>
+        </article>
+        {% empty %}
+        <div class="col-span-full text-center py-12">
+            <p class="text-gray-500">No articles found.</p>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if posts.has_other_pages %}
+    <div class="mt-8 flex justify-center">
+        <nav class="flex gap-2">
+            {% if posts.has_previous %}
+                <a href="?page={{ posts.previous_page_number }}" class="px-4 py-2 border rounded hover:bg-gray-50">Previous</a>
+            {% endif %}
+            
+            {% for num in posts.paginator.page_range %}
+                {% if posts.number == num %}
+                    <span class="px-4 py-2 bg-blue-600 text-white rounded">{{ num }}</span>
+                {% else %}
+                    <a href="?page={{ num }}" class="px-4 py-2 border rounded hover:bg-gray-50">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+            
+            {% if posts.has_next %}
+                <a href="?page={{ posts.next_page_number }}" class="px-4 py-2 border rounded hover:bg-gray-50">Next</a>
+            {% endif %}
+        </nav>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

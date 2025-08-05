@@ -15,7 +15,7 @@
                     <a href="{% url 'booking' %}" class="bg-white text-primary-blue px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
                         Book Service Now
                     </a>
-                    <a href="tel:+16475518342" class="bg-red-600 px-8 py-3 rounded-lg font-semibold hover:bg-red-700 transition">
+                    <a href="tel:+16475518342" class="bg-red-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-red-700 transition">
                         <i class="fas fa-phone mr-2"></i>Emergency Call
                     </a>
                 </div>
@@ -42,10 +42,50 @@
         </div>
     </div>
     
+    <!-- Slide 3 -->
+    <div class="hero-slide absolute inset-0 bg-cover bg-center bg-fixed transition-opacity duration-1000 opacity-0" style="background-image: url('{% static 'images/heroimage3.webp' %}')">
+        <div class="absolute inset-0 bg-black bg-opacity-60"></div>
+        <div class="relative h-full flex items-center justify-center">
+            <div class="max-w-7xl mx-auto px-4 text-center text-white">
+                <h1 class="text-6xl font-bold mb-6">Reliable Emergency Service</h1>
+                <p class="text-2xl mb-8">Available 24/7 • Fast Response • Licensed Professionals</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="tel:+16475518342" class="bg-red-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-red-700 transition">
+                        <i class="fas fa-phone mr-2"></i>Call Emergency
+                    </a>
+                    <a href="{% url 'booking' %}" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary-blue transition">
+                        Book Service
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Slide 4 -->
+    <div class="hero-slide absolute inset-0 bg-cover bg-center bg-fixed transition-opacity duration-1000 opacity-0" style="background-image: url('{% static 'images/heroimage4.webp' %}')">
+        <div class="absolute inset-0 bg-black bg-opacity-60"></div>
+        <div class="relative h-full flex items-center justify-center">
+            <div class="max-w-7xl mx-auto px-4 text-center text-white">
+                <h1 class="text-6xl font-bold mb-6">Complete Plumbing Solutions</h1>
+                <p class="text-2xl mb-8">Installation • Repair • Maintenance • All Services Covered</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="{% url 'services' %}" class="bg-white text-primary-blue px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+                        View All Services
+                    </a>
+                    <a href="{% url 'contact' %}" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary-blue transition">
+                        Get Quote
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Slide indicators -->
     <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
         <button class="slide-indicator w-3 h-3 rounded-full bg-white opacity-50" data-slide="0"></button>
         <button class="slide-indicator w-3 h-3 rounded-full bg-white opacity-50" data-slide="1"></button>
+        <button class="slide-indicator w-3 h-3 rounded-full bg-white opacity-50" data-slide="2"></button>
+        <button class="slide-indicator w-3 h-3 rounded-full bg-white opacity-50" data-slide="3"></button>
     </div>
 </section>
 

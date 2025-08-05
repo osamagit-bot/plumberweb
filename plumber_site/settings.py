@@ -36,6 +36,8 @@ INSTALLED_APPS = [
     'services',
     'bookings',
     'areas',
+    'blog',
+    'quotes',
 ]
 
 MIDDLEWARE = [
@@ -172,7 +174,7 @@ JAZZMIN_SETTINGS = {
     "navigation_expanded": True,
     "hide_apps": [],
     "hide_models": [],
-    "order_with_respect_to": ["auth", "bookings", "services", "areas", "main"],
+    "order_with_respect_to": ["auth", "bookings", "services", "areas", "main", "blog", "quotes"],
     "custom_links": {
         "bookings": [{
             "name": "View Bookings", 
@@ -192,6 +194,9 @@ JAZZMIN_SETTINGS = {
         "services.FAQ": "fas fa-question-circle",
         "areas.ServiceArea": "fas fa-map-marker-alt",
         "main.GalleryImage": "fas fa-images",
+        "blog.BlogPost": "fas fa-blog",
+        "quotes.QuoteCalculator": "fas fa-calculator",
+        "quotes.QuoteRequest": "fas fa-file-invoice-dollar",
     },
     "default_icon_parents": "fas fa-chevron-circle-right",
     "default_icon_children": "fas fa-circle",

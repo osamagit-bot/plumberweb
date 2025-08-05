@@ -29,22 +29,24 @@
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50" style="font-family: 'Poppins', sans-serif;">
     <!-- Navigation -->
     <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-between items-center py-4">
                 <!-- Logo -->
-                <div class="flex items-center mr-8 lg:mr-2">
-                    <i class="fas fa-wrench text-primary-blue text-xl md:text-2xl mr-2"></i>
-                    <span class="text-lg md:text-xl font-bold text-dark-blue whitespace-nowrap">SPRO PLUMBING</span>
+                <div class="flex items-center mr-4 lg:mr-6">
+                    <i class="fas fa-wrench text-primary-blue text-lg md:text-xl mr-2"></i>
+                    <span class="text-sm md:text-base lg:text-lg font-bold text-dark-blue whitespace-nowrap">SPRO PLUMBING</span>
                 </div>
                 
                 <!-- Desktop Navigation -->
-                <div class="hidden md:flex space-x-2 lg:space-x-4 xl:space-x-6 items-center text-sm lg:text-base">
+                <div class="hidden lg:flex space-x-4 xl:space-x-6 items-center text-sm">
                     <a href="{% url 'home' %}" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap">Home</a>
-                    <a href="#features" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap">Features</a>
+                    
+                    <!-- Services Dropdown -->
                     <div class="relative group">
                         <a href="{% url 'services' %}" class="flex items-center text-gray-700 hover:text-primary-blue transition">
                             Services
@@ -68,24 +70,40 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Company Dropdown -->
+                    <div class="relative group">
+                        <button class="flex items-center text-gray-700 hover:text-primary-blue transition">
+                            Company
+                            <i class="fas fa-chevron-down ml-1 text-sm group-hover:rotate-180 transition-transform"></i>
+                        </button>
+                        <div class="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                            <div class="p-2">
+                                <a href="#features" class="block py-2 px-3 text-sm text-gray-600 hover:text-primary-blue hover:bg-gray-50 rounded">Features</a>
+                                <a href="{% url 'gallery' %}" class="block py-2 px-3 text-sm text-gray-600 hover:text-primary-blue hover:bg-gray-50 rounded">Gallery</a>
+                                <a href="#testimonials" class="block py-2 px-3 text-sm text-gray-600 hover:text-primary-blue hover:bg-gray-50 rounded">Testimonials</a>
+                                <a href="{% url 'feedback' %}" class="block py-2 px-3 text-sm text-gray-600 hover:text-primary-blue hover:bg-gray-50 rounded">Reviews</a>
+                                <a href="{% url 'blog_list' %}" class="block py-2 px-3 text-sm text-gray-600 hover:text-primary-blue hover:bg-gray-50 rounded">Blog</a>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <a href="#service-areas" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap">Locations</a>
-                    <a href="{% url 'gallery' %}" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap">Gallery</a>
-                    <a href="#testimonials" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap">Testimonials</a>
-                    <a href="{% url 'feedback' %}" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap">Reviews</a>
+                    <a href="{% url 'quote_calculator' %}" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap">Get Quote</a>
                     <a href="#faq" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap">FAQ</a>
                     <a href="{% url 'contact' %}" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap">Contact</a>
                     <a href="{% url 'booking' %}" class="bg-gray-200 text-primary-blue font-semibold px-3 lg:px-4 py-2 rounded-lg hover:bg-primary-blue hover:text-white transition whitespace-nowrap">Book Now</a>
                 </div>
                 
                 <!-- Desktop Emergency Button -->
-                <div class="hidden md:flex items-center ml-8 lg:ml-12">
-                    <a href="tel:+16475518342" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition whitespace-nowrap">
-                        <i class="fas fa-phone mr-2"></i>Emergency: (647) 551-8342
+                <div class="hidden lg:flex items-center ml-4">
+                    <a href="tel:+16475518342" class="bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition text-sm whitespace-nowrap">
+                        <i class="fas fa-phone mr-1"></i>Emergency: (647) 551-8342
                     </a>
                 </div>
                 
                 <!-- Mobile Right Section -->
-                <div class="flex items-center space-x-2 md:hidden">
+                <div class="flex items-center space-x-2 lg:hidden">
                     <!-- Mobile Emergency Button -->
                     <a href="tel:+16475518342" class="bg-red-600 text-white px-2 py-2 rounded-lg hover:bg-red-700 transition text-xs whitespace-nowrap">
                         <i class="fas fa-phone mr-1"></i>Emergency
@@ -99,9 +117,10 @@
             </div>
             
             <!-- Mobile menu -->
-            <div id="mobile-menu" class="overflow-hidden transition-all duration-300 max-h-0 md:hidden pb-4">
+            <div id="mobile-menu" class="overflow-hidden transition-all duration-300 max-h-0 lg:hidden pb-4">
                 <a href="{% url 'home' %}" class="block py-2 text-gray-700 hover:text-primary-blue">Home</a>
-                <a href="#features" class="block py-2 text-gray-700 hover:text-primary-blue">Features</a>
+                
+                <!-- Mobile Services Dropdown -->
                 <div class="mobile-services-dropdown">
                     <button onclick="toggleMobileServices()" class="w-full flex justify-between items-center py-2 text-gray-700 hover:text-primary-blue">
                         Services
@@ -121,10 +140,26 @@
                         </div>
                     </div>
                 </div>
+                
+                <!-- Mobile Company Dropdown -->
+                <div class="mobile-company-dropdown">
+                    <button onclick="toggleMobileCompany()" class="w-full flex justify-between items-center py-2 text-gray-700 hover:text-primary-blue">
+                        Company
+                        <i id="mobile-company-icon" class="fas fa-chevron-down text-sm transition-transform"></i>
+                    </button>
+                    <div id="mobile-company-menu" class="overflow-hidden transition-all duration-300 max-h-0 ml-4">
+                        <div class="py-2">
+                            <a href="#features" class="block py-1 text-sm text-gray-600">Features</a>
+                            <a href="{% url 'gallery' %}" class="block py-1 text-sm text-gray-600">Gallery</a>
+                            <a href="#testimonials" class="block py-1 text-sm text-gray-600">Testimonials</a>
+                            <a href="{% url 'feedback' %}" class="block py-1 text-sm text-gray-600">Reviews</a>
+                            <a href="{% url 'blog_list' %}" class="block py-1 text-sm text-gray-600">Blog</a>
+                        </div>
+                    </div>
+                </div>
+                
                 <a href="#service-areas" class="block py-2 text-gray-700 hover:text-primary-blue">Locations</a>
-                <a href="{% url 'gallery' %}" class="block py-2 text-gray-700 hover:text-primary-blue">Gallery</a>
-                <a href="#testimonials" class="block py-2 text-gray-700 hover:text-primary-blue">Testimonials</a>
-                <a href="{% url 'feedback' %}" class="block py-2 text-gray-700 hover:text-primary-blue">Leave Review</a>
+                <a href="{% url 'quote_calculator' %}" class="block py-2 text-gray-700 hover:text-primary-blue">Get Quote</a>
                 <a href="#faq" class="block py-2 text-gray-700 hover:text-primary-blue">FAQ</a>
                 <a href="{% url 'contact' %}" class="block py-2 text-gray-700 hover:text-primary-blue">Contact</a>
                 <a href="{% url 'booking' %}" class="block py-2 bg-primary-blue text-white rounded-lg hover:bg-dark-blue transition mx-2 mt-2 text-center">Book Now</a>
@@ -154,7 +189,7 @@
         </div>
         
         <!-- WhatsApp Chat Box -->
-        <div id="whatsapp-chat" class="hidden absolute bottom-16 right-0 bg-white rounded-lg shadow-xl w-80 max-w-sm">
+        <div id="whatsapp-chat" class="absolute bottom-16 right-0 bg-white rounded-lg shadow-xl w-80 max-w-sm transform transition-all duration-300 ease-in-out opacity-0 scale-95 pointer-events-none translate-y-2">
             <div class="bg-green-500 text-white p-4 rounded-t-lg">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
@@ -300,12 +335,31 @@
                 menu.style.maxHeight = '300px';
                 icon.classList.add('rotate-180');
                 // Increase mobile menu height to accommodate services dropdown
-                mobileMenu.style.maxHeight = '800px';
+                mobileMenu.style.maxHeight = '900px';
             } else {
                 menu.style.maxHeight = '0px';
                 icon.classList.remove('rotate-180');
                 // Reset mobile menu height
-                mobileMenu.style.maxHeight = '700px';
+                mobileMenu.style.maxHeight = '800px';
+            }
+        }
+        
+        // Mobile company dropdown toggle
+        function toggleMobileCompany() {
+            const menu = document.getElementById('mobile-company-menu');
+            const icon = document.getElementById('mobile-company-icon');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (menu.style.maxHeight === '0px' || !menu.style.maxHeight) {
+                menu.style.maxHeight = '200px';
+                icon.classList.add('rotate-180');
+                // Increase mobile menu height to accommodate company dropdown
+                mobileMenu.style.maxHeight = '900px';
+            } else {
+                menu.style.maxHeight = '0px';
+                icon.classList.remove('rotate-180');
+                // Reset mobile menu height
+                mobileMenu.style.maxHeight = '800px';
             }
         }
         
@@ -400,7 +454,17 @@
         // WhatsApp Widget Functions
         function toggleWhatsAppChat() {
             const chatBox = document.getElementById('whatsapp-chat');
-            chatBox.classList.toggle('hidden');
+            const isVisible = chatBox.classList.contains('opacity-100');
+            
+            if (isVisible) {
+                // Hide chat
+                chatBox.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto', 'translate-y-0');
+                chatBox.classList.add('opacity-0', 'scale-95', 'pointer-events-none', 'translate-y-2');
+            } else {
+                // Show chat
+                chatBox.classList.remove('opacity-0', 'scale-95', 'pointer-events-none', 'translate-y-2');
+                chatBox.classList.add('opacity-100', 'scale-100', 'pointer-events-auto', 'translate-y-0');
+            }
         }
         
         function sendWhatsAppMessage(type) {
@@ -428,7 +492,9 @@
             window.open(whatsappUrl, '_blank');
             
             // Hide chat box after sending message
-            document.getElementById('whatsapp-chat').classList.add('hidden');
+            const chatBox = document.getElementById('whatsapp-chat');
+            chatBox.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto', 'translate-y-0');
+            chatBox.classList.add('opacity-0', 'scale-95', 'pointer-events-none', 'translate-y-2');
         }
         
         // Close WhatsApp chat when clicking outside
@@ -436,8 +502,9 @@
             const widget = document.getElementById('whatsapp-widget');
             const chatBox = document.getElementById('whatsapp-chat');
             
-            if (!widget.contains(event.target) && !chatBox.classList.contains('hidden')) {
-                chatBox.classList.add('hidden');
+            if (!widget.contains(event.target) && chatBox.classList.contains('opacity-100')) {
+                chatBox.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto', 'translate-y-0');
+                chatBox.classList.add('opacity-0', 'scale-95', 'pointer-events-none', 'translate-y-2');
             }
         });
     </script>
