@@ -113,23 +113,66 @@
                     <label class="block text-sm font-semibold text-gray-700 mb-4">
                         Overall Rating <span class="text-red-500">*</span>
                     </label>
-                    <div class="flex items-center space-x-4">
-                        {% for choice in form.rating %}
-                            <label class="flex items-center cursor-pointer group">
-                                {{ choice.tag }}
-                                <div class="ml-2 flex items-center">
-                                    {% for star in "12345"|slice:":"|slice:choice.choice_value %}
-                                        <i class="fas fa-star text-yellow-400 text-xl"></i>
-                                    {% endfor %}
-                                    {% for star in "12345"|slice:choice.choice_value %}
-                                        <i class="far fa-star text-gray-300 text-xl"></i>
-                                    {% endfor %}
-                                    <span class="ml-2 text-sm font-medium text-gray-700 group-hover:text-primary-blue">
-                                        {{ choice.choice_value }} Star{{ choice.choice_value|pluralize }}
-                                    </span>
-                                </div>
-                            </label>
-                        {% endfor %}
+                    <div class="space-y-3">
+                        <label class="flex items-center cursor-pointer group p-3 rounded-lg border border-gray-200 hover:border-primary-blue hover:bg-blue-50 transition-all">
+                            <input type="radio" name="rating" value="1" class="rating-radio">
+                            <div class="ml-3 flex items-center">
+                                <i class="fas fa-star text-yellow-400 text-lg"></i>
+                                <i class="far fa-star text-gray-300 text-lg"></i>
+                                <i class="far fa-star text-gray-300 text-lg"></i>
+                                <i class="far fa-star text-gray-300 text-lg"></i>
+                                <i class="far fa-star text-gray-300 text-lg"></i>
+                                <span class="ml-2 text-sm font-medium text-gray-700 group-hover:text-primary-blue">1 Star - Poor</span>
+                            </div>
+                        </label>
+                        
+                        <label class="flex items-center cursor-pointer group p-3 rounded-lg border border-gray-200 hover:border-primary-blue hover:bg-blue-50 transition-all">
+                            <input type="radio" name="rating" value="2" class="rating-radio">
+                            <div class="ml-3 flex items-center">
+                                <i class="fas fa-star text-yellow-400 text-lg"></i>
+                                <i class="fas fa-star text-yellow-400 text-lg"></i>
+                                <i class="far fa-star text-gray-300 text-lg"></i>
+                                <i class="far fa-star text-gray-300 text-lg"></i>
+                                <i class="far fa-star text-gray-300 text-lg"></i>
+                                <span class="ml-2 text-sm font-medium text-gray-700 group-hover:text-primary-blue">2 Stars - Fair</span>
+                            </div>
+                        </label>
+                        
+                        <label class="flex items-center cursor-pointer group p-3 rounded-lg border border-gray-200 hover:border-primary-blue hover:bg-blue-50 transition-all">
+                            <input type="radio" name="rating" value="3" class="rating-radio">
+                            <div class="ml-3 flex items-center">
+                                <i class="fas fa-star text-yellow-400 text-lg"></i>
+                                <i class="fas fa-star text-yellow-400 text-lg"></i>
+                                <i class="fas fa-star text-yellow-400 text-lg"></i>
+                                <i class="far fa-star text-gray-300 text-lg"></i>
+                                <i class="far fa-star text-gray-300 text-lg"></i>
+                                <span class="ml-2 text-sm font-medium text-gray-700 group-hover:text-primary-blue">3 Stars - Good</span>
+                            </div>
+                        </label>
+                        
+                        <label class="flex items-center cursor-pointer group p-3 rounded-lg border border-gray-200 hover:border-primary-blue hover:bg-blue-50 transition-all">
+                            <input type="radio" name="rating" value="4" class="rating-radio">
+                            <div class="ml-3 flex items-center">
+                                <i class="fas fa-star text-yellow-400 text-lg"></i>
+                                <i class="fas fa-star text-yellow-400 text-lg"></i>
+                                <i class="fas fa-star text-yellow-400 text-lg"></i>
+                                <i class="fas fa-star text-yellow-400 text-lg"></i>
+                                <i class="far fa-star text-gray-300 text-lg"></i>
+                                <span class="ml-2 text-sm font-medium text-gray-700 group-hover:text-primary-blue">4 Stars - Very Good</span>
+                            </div>
+                        </label>
+                        
+                        <label class="flex items-center cursor-pointer group p-3 rounded-lg border border-gray-200 hover:border-primary-blue hover:bg-blue-50 transition-all">
+                            <input type="radio" name="rating" value="5" class="rating-radio">
+                            <div class="ml-3 flex items-center">
+                                <i class="fas fa-star text-yellow-400 text-lg"></i>
+                                <i class="fas fa-star text-yellow-400 text-lg"></i>
+                                <i class="fas fa-star text-yellow-400 text-lg"></i>
+                                <i class="fas fa-star text-yellow-400 text-lg"></i>
+                                <i class="fas fa-star text-yellow-400 text-lg"></i>
+                                <span class="ml-2 text-sm font-medium text-gray-700 group-hover:text-primary-blue">5 Stars - Excellent</span>
+                            </div>
+                        </label>
                     </div>
                     {% if form.rating.errors %}
                         <p class="mt-1 text-sm text-red-600">{{ form.rating.errors.0 }}</p>
@@ -213,12 +256,21 @@
 }
 
 .rating-radio:checked + div {
-    background-color: #f3f4f6;
+    background-color: #dbeafe;
+    border-color: #3b82f6;
+}
+
+label:has(.rating-radio:checked) {
+    background-color: #dbeafe;
     border-color: #3b82f6;
 }
 
 .rating-radio:checked + div .fas {
     color: #fbbf24 !important;
+}
+
+.rating-radio:checked + div .far {
+    color: #d1d5db !important;
 }
 </style>
 
