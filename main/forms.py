@@ -2,10 +2,10 @@ from django import forms
 from django.core.validators import MinValueValidator, MaxValueValidator
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column, HTML, Div
-from services.models import Service
+from services.models import Service, Testimonial
 from bookings.models import Booking, ContactMessage
 from areas.models import ServiceArea
-from core.constants import URGENCY_CHOICES
+from core.constants import URGENCY_CHOICES, RATING_CHOICES
 
 
 class BookingForm(forms.ModelForm):
@@ -130,6 +130,74 @@ class ContactForm(forms.ModelForm):
         phone = self.cleaned_data.get('phone', '')
         if phone:
             # Basic phone validation if provided
+            import re
+            phone_pattern = re.compile(r'^[\+]?[1-9][\d]{0,15}$')
+            cleaned_phone = re.sub(r'[^\d+]', '', phone)
+            if not phone_pattern.match(cleaned_phone):
+                raise forms.ValidationError("Please enter a valid phone number.")
+        return phone
+
+
+class CustomerFeedbackForm(forms.ModelForm):
+    """Form for customers to leave feedback after service completion"""
+    
+    rating = forms.ChoiceField(
+        choices=RATING_CHOICES,
+        widget=forms.RadioSelect(attrs={
+            'class': 'rating-radio'
+        }),
+        help_text="Rate your overall experience"
+    )
+    
+    class Meta:
+        model = Testimonial
+        fields = ['customer_name', 'email', 'phone', 'service', 'location', 'rating', 'comment', 'title']
+        widgets = {
+            'customer_name': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+                'placeholder': 'Enter your full name'
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+                'placeholder': 'Enter your email address'
+            }),
+            'phone': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+                'placeholder': 'Enter your phone number (optional)'
+            }),
+            'title': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+                'placeholder': 'Brief title for your review (optional)'
+            }),
+            'service': forms.Select(attrs={
+                'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+            }),
+            'location': forms.Select(attrs={
+                'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+            }),
+            'comment': forms.Textarea(attrs={
+                'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+                'placeholder': 'Tell us about your experience with our service...',
+                'rows': 5
+            }),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['service'].queryset = Service.objects.all()
+        self.fields['location'].queryset = ServiceArea.objects.filter(is_active=True)
+        self.fields['service'].required = False
+        self.fields['location'].required = False
+        self.fields['phone'].required = False
+        self.fields['title'].required = False
+        
+        # Set default approval status to False for moderation
+        if hasattr(self.instance, 'is_approved'):
+            self.instance.is_approved = False
+
+    def clean_phone(self):
+        phone = self.cleaned_data.get('phone', '')
+        if phone:
             import re
             phone_pattern = re.compile(r'^[\+]?[1-9][\d]{0,15}$')
             cleaned_phone = re.sub(r'[^\d+]', '', phone)

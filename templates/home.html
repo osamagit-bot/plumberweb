@@ -225,6 +225,92 @@
     </div>
 </section>
 
+<!-- Customer Reviews Section -->
+<section id="testimonials" class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-dark-blue mb-4">What Our Customers Say</h2>
+            <p class="text-gray-600">Real reviews from satisfied customers across the GTA</p>
+            
+            <!-- Overall Rating Display -->
+            {% if overall_rating %}
+            <div class="flex items-center justify-center mt-6">
+                <div class="flex items-center space-x-2">
+                    <div class="flex text-yellow-400">
+                        {% for star in "12345" %}
+                            {% if forloop.counter <= overall_rating %}
+                                <i class="fas fa-star text-xl"></i>
+                            {% else %}
+                                <i class="far fa-star text-xl"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <span class="text-2xl font-bold text-dark-blue">{{ overall_rating }}/5</span>
+                    <span class="text-gray-600">({{ total_reviews }} reviews)</span>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        {% if testimonials %}
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for testimonial in testimonials %}
+            <div class="bg-gray-50 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow duration-300" data-aos="fade-up" data-aos-delay="{% cycle '0' '100' '200' %}">
+                <!-- Rating Stars -->
+                <div class="flex text-yellow-400 mb-4">
+                    {% for star in testimonial.filled_stars %}
+                        <i class="fas fa-star"></i>
+                    {% endfor %}
+                    {% for star in testimonial.empty_stars %}
+                        <i class="far fa-star"></i>
+                    {% endfor %}
+                </div>
+                
+                <!-- Review Text -->
+                <p class="text-gray-700 mb-4 italic">"{{ testimonial.comment }}"</p>
+                
+                <!-- Customer Info -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h4 class="font-semibold text-dark-blue">{{ testimonial.customer_name }}</h4>
+                        {% if testimonial.location %}
+                            <p class="text-sm text-gray-500">{{ testimonial.location.name }}</p>
+                        {% endif %}
+                        {% if testimonial.service %}
+                            <p class="text-xs text-primary-blue">{{ testimonial.service.name }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Verification Badge -->
+                    {% if testimonial.is_verified %}
+                        <div class="flex items-center text-green-600">
+                            <i class="fas fa-check-circle mr-1"></i>
+                            <span class="text-xs">Verified</span>
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Google Review Link -->
+                    {% if testimonial.google_review_url %}
+                        <a href="{{ testimonial.google_review_url }}" target="_blank" class="text-blue-600 hover:text-blue-800">
+                            <i class="fab fa-google text-lg"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- View More Reviews Button -->
+        <div class="text-center mt-12">
+            <a href="#" class="inline-flex items-center bg-primary-blue text-white px-6 py-3 rounded-lg hover:bg-dark-blue transition">
+                <i class="fab fa-google mr-2"></i>
+                View All Google Reviews
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
 <!-- FAQ Section -->
 <section id="faq" class="bg-gray-100 py-16">
     <div class="max-w-7xl mx-auto px-4">

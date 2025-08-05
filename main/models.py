@@ -16,6 +16,8 @@ class GalleryImage(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     image = models.ImageField(upload_to='gallery/')
+    before_image = models.ImageField(upload_to='gallery/before/', blank=True, null=True, help_text="Before image for before/after comparisons")
+    after_image = models.ImageField(upload_to='gallery/after/', blank=True, null=True, help_text="After image for before/after comparisons")
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='installation')
     service = models.ForeignKey(
         Service, 
@@ -46,3 +48,15 @@ class GalleryImage(models.Model):
     
     def __str__(self):
         return self.title
+    
+    @property
+    def is_before_after(self):
+        """Check if this is a before/after image"""
+        return self.before_image and self.after_image
+    
+    @property
+    def primary_image(self):
+        """Get the primary image to display"""
+        if self.is_before_after:
+            return self.after_image
+        return self.image

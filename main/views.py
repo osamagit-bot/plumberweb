@@ -1,12 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Avg, Count
 from django.utils.text import slugify
 from services.models import Service, Testimonial, FAQ
 from areas.models import ServiceArea
 from bookings.models import Booking, ContactMessage
 from .models import GalleryImage
-from .forms import BookingForm, ContactForm
+from .forms import BookingForm, ContactForm, CustomerFeedbackForm
 from core.email_utils import (
     send_booking_confirmation_email, 
     send_contact_confirmation_email,
@@ -21,9 +21,21 @@ def home(request):
                 .select_related()
                 .order_by('-created_at')[:4])
     
+    # Get featured testimonials with rating statistics
     testimonials = (Testimonial.objects
+                   .filter(is_approved=True, is_featured=True)
                    .select_related('service', 'location')
-                   .order_by('-created_at'))
+                   .order_by('-created_at')[:6])
+    
+    # Calculate overall rating and review count
+    rating_stats = Testimonial.objects.filter(is_approved=True).aggregate(
+        avg_rating=Avg('rating'),
+        total_reviews=Count('id')
+    )
+    
+    overall_rating = rating_stats['avg_rating']
+    if overall_rating:
+        overall_rating = round(overall_rating, 1)
     
     faqs = (FAQ.objects
             .filter(is_active=True)
@@ -38,6 +50,8 @@ def home(request):
     context = {
         'services': services,
         'testimonials': testimonials,
+        'overall_rating': overall_rating,
+        'total_reviews': rating_stats['total_reviews'],
         'faqs': faqs,
         'service_areas': service_areas,
     }
@@ -169,3 +183,29 @@ def gallery_view(request):
         'current_location': location_filter,
     }
     return render(request, 'gallery.html', context)
+
+
+def feedback_view(request):
+    """Customer feedback form view"""
+    if request.method == 'POST':
+        form = CustomerFeedbackForm(request.POST)
+        if form.is_valid():
+            feedback = form.save(commit=False)
+            feedback.is_approved = False  # Require admin approval
+            feedback.save()
+            
+            messages.success(
+                request, 
+                'Thank you for your feedback! Your review has been submitted and will be published after approval.'
+            )
+            return redirect('feedback')
+        else:
+            messages.error(
+                request, 
+                'Please correct the errors below and try again.'
+            )
+    else:
+        form = CustomerFeedbackForm()
+    
+    context = {'form': form}
+    return render(request, 'feedback.html', context)

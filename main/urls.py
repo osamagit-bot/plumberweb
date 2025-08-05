@@ -8,6 +8,7 @@ urlpatterns = [
     path('booking/', views.booking_view, name='booking'),
     path('contact/', views.contact_view, name='contact'),
     path('gallery/', views.gallery_view, name='gallery'),
+    path('feedback/', views.feedback_view, name='feedback'),
     
     # Email preview URLs (for testing only)
     path('preview/email/booking/', preview_booking_email, name='preview_booking_email'),

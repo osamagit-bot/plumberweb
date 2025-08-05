@@ -30,6 +30,7 @@ class Service(models.Model):
 class Testimonial(models.Model):
     customer_name = models.CharField(max_length=100)
     email = models.EmailField(max_length=100, blank=True)
+    phone = models.CharField(max_length=20, blank=True)
     title = models.CharField(max_length=200, blank=True)
     location = models.ForeignKey(
         'areas.ServiceArea', 
@@ -52,6 +53,8 @@ class Testimonial(models.Model):
     comment = models.TextField()
     is_featured = models.BooleanField(default=False, db_index=True)
     is_approved = models.BooleanField(default=True, db_index=True)
+    is_verified = models.BooleanField(default=False, help_text="Verified customer review")
+    google_review_url = models.URLField(blank=True, help_text="Link to Google review")
     created_at = models.DateTimeField(auto_now_add=True, db_index=True, null=True)
 
     class Meta:
@@ -61,6 +64,21 @@ class Testimonial(models.Model):
 
     def __str__(self):
         return f"{self.customer_name} - {self.rating} stars"
+    
+    @property
+    def star_range(self):
+        """Return range for template star display"""
+        return range(1, 6)
+    
+    @property
+    def filled_stars(self):
+        """Return range of filled stars"""
+        return range(1, self.rating + 1)
+    
+    @property
+    def empty_stars(self):
+        """Return range of empty stars"""
+        return range(self.rating + 1, 6)
 
 
 class FAQ(models.Model):

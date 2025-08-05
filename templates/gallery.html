@@ -114,9 +114,31 @@
                 {% for image in images %}
                 <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
                     <div class="aspect-w-16 aspect-h-12 relative overflow-hidden">
-                        <img src="{{ image.image.url }}" alt="{{ image.title }}" 
-                             class="w-full h-48 object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
-                             onclick="openModal('{{ image.image.url }}', '{{ image.title }}', '{{ image.description|escapejs }}')">
+                        {% if image.is_before_after %}
+                            <!-- Before/After Image Slider -->
+                            <div class="relative w-full h-48 overflow-hidden">
+                                <div class="before-after-container relative w-full h-full">
+                                    <img src="{{ image.before_image.url }}" alt="Before - {{ image.title }}" 
+                                         class="absolute top-0 left-0 w-full h-full object-cover">
+                                    <div class="after-image-container absolute top-0 left-0 w-1/2 h-full overflow-hidden">
+                                        <img src="{{ image.after_image.url }}" alt="After - {{ image.title }}" 
+                                             class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="slider-handle absolute top-0 left-1/2 w-1 h-full bg-white cursor-ew-resize z-10 transform -translate-x-1/2">
+                                        <div class="absolute top-1/2 left-1/2 w-8 h-8 bg-white rounded-full shadow-lg transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
+                                            <i class="fas fa-arrows-alt-h text-gray-600 text-sm"></i>
+                                        </div>
+                                    </div>
+                                    <div class="absolute top-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">Before</div>
+                                    <div class="absolute top-2 right-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">After</div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <!-- Regular Image -->
+                            <img src="{{ image.primary_image.url }}" alt="{{ image.title }}" 
+                                 class="w-full h-48 object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
+                                 onclick="openModal('{{ image.primary_image.url }}', '{{ image.title }}', '{{ image.description|escapejs }}')">
+                        {% endif %}
                     </div>
                     <div class="p-4">
                         <h3 class="font-semibold mb-2">{{ image.title }}</h3>
@@ -125,6 +147,9 @@
                         {% endif %}
                         <div class="flex flex-wrap gap-1">
                             <span class="bg-primary-blue text-white px-2 py-1 rounded text-xs">{{ image.get_category_display }}</span>
+                            {% if image.is_before_after %}
+                                <span class="bg-orange-500 text-white px-2 py-1 rounded text-xs">Before/After</span>
+                            {% endif %}
                             {% if image.service %}
                                 <span class="bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs">{{ image.service.name }}</span>
                             {% endif %}
@@ -202,6 +227,65 @@ document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         closeModal();
     }
+});
+
+// Before/After Image Slider
+document.addEventListener('DOMContentLoaded', function() {
+    const beforeAfterContainers = document.querySelectorAll('.before-after-container');
+    
+    beforeAfterContainers.forEach(container => {
+        const slider = container.querySelector('.slider-handle');
+        const afterContainer = container.querySelector('.after-image-container');
+        let isSliding = false;
+        
+        function updateSlider(x) {
+            const containerRect = container.getBoundingClientRect();
+            const percentage = Math.max(0, Math.min(100, ((x - containerRect.left) / containerRect.width) * 100));
+            
+            afterContainer.style.width = percentage + '%';
+            slider.style.left = percentage + '%';
+        }
+        
+        // Mouse events
+        slider.addEventListener('mousedown', function(e) {
+            isSliding = true;
+            e.preventDefault();
+        });
+        
+        document.addEventListener('mousemove', function(e) {
+            if (isSliding) {
+                updateSlider(e.clientX);
+            }
+        });
+        
+        document.addEventListener('mouseup', function() {
+            isSliding = false;
+        });
+        
+        // Touch events for mobile
+        slider.addEventListener('touchstart', function(e) {
+            isSliding = true;
+            e.preventDefault();
+        });
+        
+        document.addEventListener('touchmove', function(e) {
+            if (isSliding) {
+                const touch = e.touches[0];
+                updateSlider(touch.clientX);
+            }
+        });
+        
+        document.addEventListener('touchend', function() {
+            isSliding = false;
+        });
+        
+        // Click anywhere on the container to move slider
+        container.addEventListener('click', function(e) {
+            if (!isSliding) {
+                updateSlider(e.clientX);
+            }
+        });
+    });
 });
 </script>
 {% endblock %}

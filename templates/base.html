@@ -71,6 +71,7 @@
                     <a href="#service-areas" class="text-gray-700 hover:text-primary-blue transition">Locations</a>
                     <a href="{% url 'gallery' %}" class="text-gray-700 hover:text-primary-blue transition">Gallery</a>
                     <a href="#testimonials" class="text-gray-700 hover:text-primary-blue transition">Testimonials</a>
+                    <a href="{% url 'feedback' %}" class="text-gray-700 hover:text-primary-blue transition">Leave Review</a>
                     <a href="#faq" class="text-gray-700 hover:text-primary-blue transition">FAQ</a>
                     <a href="{% url 'contact' %}" class="text-gray-700 hover:text-primary-blue transition">Contact</a>
                     <a href="{% url 'booking' %}" class="bg-gray-200 text-primary-blue font-semibold lg:w-28 px-4 py-2 rounded-lg hover:bg-primary-blue hover:text-white transition">Book Now</a>
@@ -123,6 +124,7 @@
                 <a href="#service-areas" class="block py-2 text-gray-700 hover:text-primary-blue">Locations</a>
                 <a href="{% url 'gallery' %}" class="block py-2 text-gray-700 hover:text-primary-blue">Gallery</a>
                 <a href="#testimonials" class="block py-2 text-gray-700 hover:text-primary-blue">Testimonials</a>
+                <a href="{% url 'feedback' %}" class="block py-2 text-gray-700 hover:text-primary-blue">Leave Review</a>
                 <a href="#faq" class="block py-2 text-gray-700 hover:text-primary-blue">FAQ</a>
                 <a href="{% url 'contact' %}" class="block py-2 text-gray-700 hover:text-primary-blue">Contact</a>
                 <a href="{% url 'booking' %}" class="block py-2 bg-primary-blue text-white rounded-lg hover:bg-dark-blue transition mx-2 mt-2 text-center">Book Now</a>
@@ -143,6 +145,82 @@
         {% block content %}
         {% endblock %}
     </main>
+
+    <!-- WhatsApp Floating Button -->
+    <div id="whatsapp-widget" class="fixed bottom-6 right-6 z-50">
+        <!-- WhatsApp Button -->
+        <div id="whatsapp-btn" class="bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-lg cursor-pointer transition-all duration-300 hover:scale-110" onclick="toggleWhatsAppChat()">
+            <i class="fab fa-whatsapp text-2xl"></i>
+        </div>
+        
+        <!-- WhatsApp Chat Box -->
+        <div id="whatsapp-chat" class="hidden absolute bottom-16 right-0 bg-white rounded-lg shadow-xl w-80 max-w-sm">
+            <div class="bg-green-500 text-white p-4 rounded-t-lg">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-wrench text-green-500"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">SPRO Plumbing</h4>
+                            <p class="text-sm opacity-90">Typically replies instantly</p>
+                        </div>
+                    </div>
+                    <button onclick="toggleWhatsAppChat()" class="text-white hover:text-gray-200">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-4">
+                <div class="bg-gray-100 rounded-lg p-3 mb-4">
+                    <p class="text-sm text-gray-700">👋 Hi there! Need emergency plumbing help or want to schedule a service?</p>
+                </div>
+                
+                <div class="space-y-2">
+                    <button onclick="sendWhatsAppMessage('emergency')" class="w-full text-left p-3 bg-red-50 hover:bg-red-100 rounded-lg border border-red-200 transition">
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-triangle text-red-500 mr-3"></i>
+                            <div>
+                                <p class="font-semibold text-red-700">Emergency Service</p>
+                                <p class="text-sm text-red-600">24/7 Available</p>
+                            </div>
+                        </div>
+                    </button>
+                    
+                    <button onclick="sendWhatsAppMessage('booking')" class="w-full text-left p-3 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition">
+                        <div class="flex items-center">
+                            <i class="fas fa-calendar-check text-blue-500 mr-3"></i>
+                            <div>
+                                <p class="font-semibold text-blue-700">Schedule Service</p>
+                                <p class="text-sm text-blue-600">Book an appointment</p>
+                            </div>
+                        </div>
+                    </button>
+                    
+                    <button onclick="sendWhatsAppMessage('quote')" class="w-full text-left p-3 bg-green-50 hover:bg-green-100 rounded-lg border border-green-200 transition">
+                        <div class="flex items-center">
+                            <i class="fas fa-calculator text-green-500 mr-3"></i>
+                            <div>
+                                <p class="font-semibold text-green-700">Get Quote</p>
+                                <p class="text-sm text-green-600">Free estimate</p>
+                            </div>
+                        </div>
+                    </button>
+                    
+                    <button onclick="sendWhatsAppMessage('general')" class="w-full text-left p-3 bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition">
+                        <div class="flex items-center">
+                            <i class="fas fa-comments text-gray-500 mr-3"></i>
+                            <div>
+                                <p class="font-semibold text-gray-700">General Inquiry</p>
+                                <p class="text-sm text-gray-600">Ask a question</p>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="bg-dark-blue text-white py-12">
@@ -313,6 +391,50 @@
                 }
             });
         }
+        
+        // WhatsApp Widget Functions
+        function toggleWhatsAppChat() {
+            const chatBox = document.getElementById('whatsapp-chat');
+            chatBox.classList.toggle('hidden');
+        }
+        
+        function sendWhatsAppMessage(type) {
+            const phoneNumber = '16475518342'; // Your WhatsApp business number
+            let message = '';
+            
+            switch(type) {
+                case 'emergency':
+                    message = 'Hi! I need emergency plumbing service. Please help me ASAP!';
+                    break;
+                case 'booking':
+                    message = 'Hi! I would like to schedule a plumbing service appointment. When are you available?';
+                    break;
+                case 'quote':
+                    message = 'Hi! I need a quote for plumbing services. Can you help me with an estimate?';
+                    break;
+                case 'general':
+                    message = 'Hi! I have a question about your plumbing services.';
+                    break;
+                default:
+                    message = 'Hi! I need help with plumbing services.';
+            }
+            
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+            
+            // Hide chat box after sending message
+            document.getElementById('whatsapp-chat').classList.add('hidden');
+        }
+        
+        // Close WhatsApp chat when clicking outside
+        document.addEventListener('click', function(event) {
+            const widget = document.getElementById('whatsapp-widget');
+            const chatBox = document.getElementById('whatsapp-chat');
+            
+            if (!widget.contains(event.target) && !chatBox.classList.contains('hidden')) {
+                chatBox.classList.add('hidden');
+            }
+        });
     </script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
