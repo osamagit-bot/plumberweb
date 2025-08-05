@@ -26,27 +26,7 @@ def location_home(request, location_slug=None):
     else:
         service_area = ServiceArea.objects.filter(is_active=True).first()
     
-    if request.method == 'POST' and request.POST.get('action') == 'add_review':
-        service_id = request.POST.get('service')
-        service_obj = None
-        if service_id:
-            try:
-                service_obj = Service.objects.get(id=service_id)
-            except Service.DoesNotExist:
-                pass
-        
-        testimonial = Testimonial(
-            customer_name=request.POST['customer_name'],
-            email=request.POST['email'],
-            rating=int(request.POST['rating']),
-            title=request.POST['title'],
-            comment=request.POST['comment'],
-            location=service_area,
-            service=service_obj
-        )
-        testimonial.save()
-        messages.success(request, f'Thank you for your review! Your feedback helps other {service_area.name} customers.')
-        return redirect('location_home', location_slug=slugify(service_area.name))
+
     
     services = Service.objects.all()[:4]
     testimonials = Testimonial.objects.filter(location=service_area)

@@ -229,7 +229,7 @@
 <section id="testimonials" class="py-16 bg-white">
     <div class="max-w-7xl mx-auto px-4">
         <div class="text-center mb-12">
-            <h2 class="text-3xl font-bold text-dark-blue mb-4">What Our Customers Say</h2>
+            <h2 class="text-3xl font-bold text-dark-blue mb-4"> Our Customers Rating</h2>
             <p class="text-gray-600">Real reviews from satisfied customers across the GTA</p>
             
             <!-- Overall Rating Display -->
@@ -300,9 +300,13 @@
             {% endfor %}
         </div>
         
-        <!-- View More Reviews Button -->
-        <div class="text-center mt-12">
-            <a href="#" class="inline-flex items-center bg-primary-blue text-white px-6 py-3 rounded-lg hover:bg-dark-blue transition">
+        <!-- Review Actions -->
+        <div class="text-center mt-12 space-x-4">
+            <a href="{% url 'feedback' %}" class="inline-flex items-center bg-primary-blue text-white px-6 py-3 rounded-lg hover:bg-dark-blue transition">
+                <i class="fas fa-star mr-2"></i>
+                Leave a Review
+            </a>
+            <a href="#" class="inline-flex items-center bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition">
                 <i class="fab fa-google mr-2"></i>
                 View All Google Reviews
             </a>

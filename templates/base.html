@@ -42,9 +42,9 @@
                 </div>
                 
                 <!-- Desktop Navigation -->
-                <div class="hidden md:flex space-x-4 lg:space-x-6 items-center">
-                    <a href="{% url 'home' %}" class="text-gray-700 hover:text-primary-blue transition">Home</a>
-                    <a href="#features" class="text-gray-700 hover:text-primary-blue transition">Features</a>
+                <div class="hidden md:flex space-x-2 lg:space-x-4 xl:space-x-6 items-center text-sm lg:text-base">
+                    <a href="{% url 'home' %}" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap">Home</a>
+                    <a href="#features" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap">Features</a>
                     <div class="relative group">
                         <a href="{% url 'services' %}" class="flex items-center text-gray-700 hover:text-primary-blue transition">
                             Services
@@ -68,13 +68,13 @@
                             </div>
                         </div>
                     </div>
-                    <a href="#service-areas" class="text-gray-700 hover:text-primary-blue transition">Locations</a>
-                    <a href="{% url 'gallery' %}" class="text-gray-700 hover:text-primary-blue transition">Gallery</a>
-                    <a href="#testimonials" class="text-gray-700 hover:text-primary-blue transition">Testimonials</a>
-                    <a href="{% url 'feedback' %}" class="text-gray-700 hover:text-primary-blue transition">Leave Review</a>
-                    <a href="#faq" class="text-gray-700 hover:text-primary-blue transition">FAQ</a>
-                    <a href="{% url 'contact' %}" class="text-gray-700 hover:text-primary-blue transition">Contact</a>
-                    <a href="{% url 'booking' %}" class="bg-gray-200 text-primary-blue font-semibold lg:w-28 px-4 py-2 rounded-lg hover:bg-primary-blue hover:text-white transition">Book Now</a>
+                    <a href="#service-areas" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap">Locations</a>
+                    <a href="{% url 'gallery' %}" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap">Gallery</a>
+                    <a href="#testimonials" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap">Testimonials</a>
+                    <a href="{% url 'feedback' %}" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap">Reviews</a>
+                    <a href="#faq" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap">FAQ</a>
+                    <a href="{% url 'contact' %}" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap">Contact</a>
+                    <a href="{% url 'booking' %}" class="bg-gray-200 text-primary-blue font-semibold px-3 lg:px-4 py-2 rounded-lg hover:bg-primary-blue hover:text-white transition whitespace-nowrap">Book Now</a>
                 </div>
                 
                 <!-- Desktop Emergency Button -->
@@ -294,13 +294,18 @@
         function toggleMobileServices() {
             const menu = document.getElementById('mobile-services-menu');
             const icon = document.getElementById('mobile-services-icon');
+            const mobileMenu = document.getElementById('mobile-menu');
             
             if (menu.style.maxHeight === '0px' || !menu.style.maxHeight) {
                 menu.style.maxHeight = '300px';
                 icon.classList.add('rotate-180');
+                // Increase mobile menu height to accommodate services dropdown
+                mobileMenu.style.maxHeight = '800px';
             } else {
                 menu.style.maxHeight = '0px';
                 icon.classList.remove('rotate-180');
+                // Reset mobile menu height
+                mobileMenu.style.maxHeight = '700px';
             }
         }
         
