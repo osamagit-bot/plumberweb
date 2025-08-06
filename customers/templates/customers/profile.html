@@ -1,0 +1,214 @@
+{% extends 'customers/base.html' %}
+
+{% block title %}My Profile - Customer Portal{% endblock %}
+
+{% block breadcrumb %}
+<span class="text-white">My Profile</span>
+{% endblock %}
+
+{% block customer_content %}
+<div class="mb-8">
+    <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+        <i class="fas fa-user mr-3 text-primary-blue"></i>My Profile
+    </h2>
+    <p class="text-gray-600 mt-2">Update your personal information and preferences</p>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2">
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                <i class="fas fa-user-edit mr-2 text-primary-blue"></i>Update Profile Information
+            </h3>
+            
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Personal Information -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-user mr-1 text-gray-400"></i>First Name <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.first_name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-user mr-1 text-gray-400"></i>Last Name <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.last_name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="fas fa-envelope mr-1 text-gray-400"></i>Email Address <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.email.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="fas fa-phone mr-1 text-gray-400"></i>Phone Number
+                    </label>
+                    {{ form.phone }}
+                    {% if form.phone.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.phone.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Address Information -->
+                <div class="border-t border-gray-200 pt-6">
+                    <h4 class="text-md font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-map-marker-alt mr-2 text-green-500"></i>Address Information
+                    </h4>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Street Address</label>
+                            {{ form.address }}
+                            {% if form.address.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.address.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">City</label>
+                                {{ form.city }}
+                                {% if form.city.errors %}
+                                    <p class="mt-1 text-sm text-red-600">{{ form.city.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Postal Code</label>
+                                {{ form.postal_code }}
+                                {% if form.postal_code.errors %}
+                                    <p class="mt-1 text-sm text-red-600">{{ form.postal_code.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Emergency Contact -->
+                <div class="border-t border-gray-200 pt-6">
+                    <h4 class="text-md font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-exclamation-triangle mr-2 text-red-500"></i>Emergency Contact
+                    </h4>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Emergency Contact Name</label>
+                            {{ form.emergency_contact }}
+                            {% if form.emergency_contact.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.emergency_contact.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Emergency Contact Phone</label>
+                            {{ form.emergency_phone }}
+                            {% if form.emergency_phone.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.emergency_phone.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Communication Preferences -->
+                <div class="border-t border-gray-200 pt-6">
+                    <h4 class="text-md font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-bell mr-2 text-purple-500"></i>Communication Preferences
+                    </h4>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Preferred Contact Method</label>
+                            <select name="{{ form.preferred_contact_method.name }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent transition duration-200 bg-gray-50 focus:bg-white">
+                                {% for choice in form.preferred_contact_method %}
+                                    {{ choice.tag }}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <label class="flex items-center">
+                                <input type="checkbox" name="{{ form.email_notifications.name }}" {% if form.email_notifications.value %}checked{% endif %} class="w-4 h-4 text-primary-blue bg-gray-100 border-gray-300 rounded focus:ring-primary-blue focus:ring-2">
+                                <span class="ml-3 text-sm font-medium text-gray-700">Receive email notifications</span>
+                            </label>
+                            
+                            <label class="flex items-center">
+                                <input type="checkbox" name="{{ form.sms_notifications.name }}" {% if form.sms_notifications.value %}checked{% endif %} class="w-4 h-4 text-primary-blue bg-gray-100 border-gray-300 rounded focus:ring-primary-blue focus:ring-2">
+                                <span class="ml-3 text-sm font-medium text-gray-700">Receive SMS notifications</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="w-full bg-gradient-to-r from-primary-blue to-light-blue text-white font-semibold py-3 px-6 rounded-lg hover:from-dark-blue hover:to-primary-blue transform hover:scale-105 transition duration-200 shadow-lg hover:shadow-xl">
+                    <i class="fas fa-save mr-2"></i>Update Profile
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="space-y-6">
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-info-circle mr-2 text-blue-500"></i>Account Information
+            </h3>
+            
+            <div class="space-y-3 text-sm">
+                <div class="flex justify-between">
+                    <span class="font-medium text-gray-600">Username:</span>
+                    <span class="text-gray-900">{{ user.username }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="font-medium text-gray-600">Member Since:</span>
+                    <span class="text-gray-900">{{ customer_profile.created_at|date:"M d, Y" }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="font-medium text-gray-600">Last Updated:</span>
+                    <span class="text-gray-900">{{ customer_profile.updated_at|date:"M d, Y" }}</span>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-200 mt-4 pt-4">
+                <h4 class="text-sm font-semibold text-gray-900 mb-2 flex items-center">
+                    <i class="fas fa-key mr-2 text-yellow-500"></i>Password
+                </h4>
+                <p class="text-xs text-gray-600 mb-3">To change your password, use the link below:</p>
+                <a href="{% url 'customers:password_reset' %}" class="inline-flex items-center px-3 py-2 border border-primary-blue text-primary-blue rounded-lg hover:bg-primary-blue hover:text-white transition duration-200 text-sm">
+                    <i class="fas fa-lock mr-2"></i>Change Password
+                </a>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-chart-line mr-2 text-green-500"></i>Quick Stats
+            </h3>
+            
+            <div class="grid grid-cols-2 gap-4 text-center">
+                <div>
+                    <div class="text-2xl font-bold text-primary-blue">{{ user.bookings.count }}</div>
+                    <div class="text-xs text-gray-600 uppercase tracking-wide font-semibold">Bookings</div>
+                </div>
+                <div>
+                    <div class="text-2xl font-bold text-green-500">{{ user.quote_requests.count }}</div>
+                    <div class="text-xs text-gray-600 uppercase tracking-wide font-semibold">Quotes</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

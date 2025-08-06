@@ -38,7 +38,7 @@
                     <h3 class="text-lg font-semibold text-dark-blue mb-3">{{ service.name }}</h3>
                     <p class="text-gray-600 mb-3">{{ service.description }}</p>
                     <p class="text-red-600 font-semibold mb-3">{{ service.price_range }}</p>
-                    <a href="{% url 'booking' %}" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">
+                    <a href="{% url 'main:booking' %}" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">
                         Book Emergency Service
                     </a>
                 </div>
@@ -82,7 +82,7 @@
                     <h3 class="text-lg font-semibold text-dark-blue mb-3">{{ service.name }}</h3>
                     <p class="text-gray-600 mb-3">{{ service.description }}</p>
                     <p class="text-primary-blue font-semibold mb-3">{{ service.price_range }}</p>
-                    <a href="{% url 'booking' %}" class="bg-primary-blue text-white px-4 py-2 rounded hover:bg-dark-blue transition">
+                    <a href="{% url 'main:booking' %}" class="bg-primary-blue text-white px-4 py-2 rounded hover:bg-dark-blue transition">
                         Schedule Service
                     </a>
                 </div>
@@ -128,10 +128,10 @@
         <h2 class="text-3xl font-bold mb-4">Ready to Get Started?</h2>
         <p class="text-xl mb-8">Book your service today or contact us for a free estimate</p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="{% url 'booking' %}" class="bg-white text-primary-blue px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+            <a href="{% url 'main:booking' %}" class="bg-white text-primary-blue px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
                 Book Service Now
             </a>
-            <a href="{% url 'contact' %}" class="border-2 border-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary-blue transition">
+            <a href="{% url 'main:contact' %}" class="border-2 border-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary-blue transition">
                 Get Free Quote
             </a>
         </div>

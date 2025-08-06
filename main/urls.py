@@ -2,6 +2,8 @@ from django.urls import path
 from . import views
 from .email_preview import preview_booking_email, preview_admin_email, preview_contact_email
 
+app_name = 'main'
+
 urlpatterns = [
     path('', views.home, name='home'),
     path('services/', views.services_view, name='services'),

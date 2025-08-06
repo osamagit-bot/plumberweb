@@ -1,0 +1,245 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" style="scroll-behavior: smooth;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Customer Portal - SPRO Plumbing{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-blue': '#1e40af',
+                        'light-blue': '#3b82f6',
+                        'dark-blue': '#1e3a8a',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-white to-blue-50" style="font-family: 'Poppins', sans-serif;">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-primary-blue to-dark-blue text-white py-8">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold flex items-center mb-2">
+                            <i class="fas fa-user-circle mr-3"></i>Customer Portal
+                        </h1>
+                        <p class="text-blue-100">Welcome back, {% if user.first_name %}{{ user.first_name }}{% else %}{{ user.username }}{% endif %}!</p>
+                    </div>
+                    <div class="mt-4 md:mt-0 flex flex-col md:flex-row md:items-center md:justify-between w-full md:w-auto gap-4">
+                        <nav class="flex items-center space-x-2 text-sm">
+                            <a href="{% url 'main:home' %}" class="text-blue-200 hover:text-white transition flex items-center">
+                                <i class="fas fa-external-link-alt mr-1"></i>Back to Website
+                            </a>
+                            <i class="fas fa-chevron-right text-blue-300 text-xs"></i>
+                            {% block breadcrumb %}
+                            <span class="text-white">Portal</span>
+                            {% endblock %}
+                        </nav>
+                        
+                        <div class="flex items-center justify-between md:justify-end space-x-2">
+                            <!-- Emergency Contact -->
+                            <a href="tel:+16475518342" class="bg-red-600 text-white px-2 md:px-3 py-2 rounded-lg hover:bg-red-700 transition text-xs md:text-sm whitespace-nowrap">
+                                <i class="fas fa-phone mr-1"></i><span class="hidden sm:inline">Emergency: </span>(647) 551-8342
+                            </a>
+                            
+                            <!-- Mobile Menu Button -->
+                            <button id="mobile-sidebar-btn" class="lg:hidden text-white p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition">
+                                <i id="mobile-sidebar-icon" class="fas fa-bars text-xl"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Sidebar Overlay -->
+        <div id="mobile-sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden opacity-0 invisible transition-all duration-300"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Sidebar -->
+                <div class="lg:w-64 flex-shrink-0">
+                    <!-- Desktop Sidebar -->
+                    <div class="hidden lg:block bg-white rounded-2xl shadow-lg p-6 sticky top-8">
+                        <nav class="space-y-2">
+                            <a href="{% url 'customers:dashboard' %}" class="flex items-center px-4 py-3 rounded-lg transition {% if request.resolver_match.url_name == 'dashboard' %}bg-primary-blue text-white{% else %}text-gray-700 hover:bg-blue-50 hover:text-primary-blue{% endif %}">
+                                <i class="fas fa-tachometer-alt mr-3 w-5"></i>Dashboard
+                            </a>
+                            <a href="{% url 'customers:profile' %}" class="flex items-center px-4 py-3 rounded-lg transition {% if request.resolver_match.url_name == 'profile' %}bg-primary-blue text-white{% else %}text-gray-700 hover:bg-blue-50 hover:text-primary-blue{% endif %}">
+                                <i class="fas fa-user mr-3 w-5"></i>My Profile
+                            </a>
+                            <a href="{% url 'customers:bookings' %}" class="flex items-center px-4 py-3 rounded-lg transition {% if 'booking' in request.resolver_match.url_name %}bg-primary-blue text-white{% else %}text-gray-700 hover:bg-blue-50 hover:text-primary-blue{% endif %}">
+                                <i class="fas fa-calendar-alt mr-3 w-5"></i>My Bookings
+                            </a>
+                            <a href="{% url 'customers:quotes' %}" class="flex items-center px-4 py-3 rounded-lg transition {% if 'quote' in request.resolver_match.url_name %}bg-primary-blue text-white{% else %}text-gray-700 hover:bg-blue-50 hover:text-primary-blue{% endif %}">
+                                <i class="fas fa-file-invoice-dollar mr-3 w-5"></i>My Quotes
+                            </a>
+                            <a href="{% url 'customers:service_history' %}" class="flex items-center px-4 py-3 rounded-lg transition {% if request.resolver_match.url_name == 'service_history' %}bg-primary-blue text-white{% else %}text-gray-700 hover:bg-blue-50 hover:text-primary-blue{% endif %}">
+                                <i class="fas fa-history mr-3 w-5"></i>Service History
+                            </a>
+                            <div class="border-t border-gray-200 my-4"></div>
+                            <a href="{% url 'customers:logout' %}" class="flex items-center px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition">
+                                <i class="fas fa-sign-out-alt mr-3 w-5"></i>Logout
+                            </a>
+                        </nav>
+                    </div>
+                    
+                    <!-- Mobile Sidebar -->
+                    <div id="mobile-sidebar" class="lg:hidden fixed left-0 top-0 h-full w-80 bg-white shadow-xl z-50 transform -translate-x-full transition-transform duration-300 ease-in-out">
+                        <div class="p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h2 class="text-xl font-bold text-gray-900 flex items-center">
+                                    <i class="fas fa-user-circle mr-2 text-primary-blue"></i>{% if user.first_name %}{{ user.first_name|capfirst }}{% else %}{{ user.username|capfirst }}{% endif %} Portal
+                                </h2>
+                                <button id="close-mobile-sidebar" class="text-gray-500 hover:text-gray-700 p-2">
+                                    <i class="fas fa-times text-xl"></i>
+                                </button>
+                            </div>
+                            <nav class="space-y-2">
+                                <a href="{% url 'customers:dashboard' %}" class="flex items-center px-4 py-3 rounded-lg transition {% if request.resolver_match.url_name == 'dashboard' %}bg-primary-blue text-white{% else %}text-gray-700 hover:bg-blue-50 hover:text-primary-blue{% endif %}">
+                                    <i class="fas fa-tachometer-alt mr-3 w-5"></i>Dashboard
+                                </a>
+                                <a href="{% url 'customers:profile' %}" class="flex items-center px-4 py-3 rounded-lg transition {% if request.resolver_match.url_name == 'profile' %}bg-primary-blue text-white{% else %}text-gray-700 hover:bg-blue-50 hover:text-primary-blue{% endif %}">
+                                    <i class="fas fa-user mr-3 w-5"></i>My Profile
+                                </a>
+                                <a href="{% url 'customers:bookings' %}" class="flex items-center px-4 py-3 rounded-lg transition {% if 'booking' in request.resolver_match.url_name %}bg-primary-blue text-white{% else %}text-gray-700 hover:bg-blue-50 hover:text-primary-blue{% endif %}">
+                                    <i class="fas fa-calendar-alt mr-3 w-5"></i>My Bookings
+                                </a>
+                                <a href="{% url 'customers:quotes' %}" class="flex items-center px-4 py-3 rounded-lg transition {% if 'quote' in request.resolver_match.url_name %}bg-primary-blue text-white{% else %}text-gray-700 hover:bg-blue-50 hover:text-primary-blue{% endif %}">
+                                    <i class="fas fa-file-invoice-dollar mr-3 w-5"></i>My Quotes
+                                </a>
+                                <a href="{% url 'customers:service_history' %}" class="flex items-center px-4 py-3 rounded-lg transition {% if request.resolver_match.url_name == 'service_history' %}bg-primary-blue text-white{% else %}text-gray-700 hover:bg-blue-50 hover:text-primary-blue{% endif %}">
+                                    <i class="fas fa-history mr-3 w-5"></i>Service History
+                                </a>
+                                <div class="border-t border-gray-200 my-4"></div>
+                                <a href="{% url 'customers:logout' %}" class="flex items-center px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition">
+                                    <i class="fas fa-sign-out-alt mr-3 w-5"></i>Logout
+                                </a>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="flex-1">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="mb-6 p-4 rounded-lg border-l-4 {% if message.tags == 'error' %}bg-red-50 border-red-400 text-red-700{% elif message.tags == 'success' %}bg-green-50 border-green-400 text-green-700{% else %}bg-blue-50 border-blue-400 text-blue-700{% endif %}">
+                                <div class="flex items-center">
+                                    <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'success' %}fa-check-circle{% else %}fa-info-circle{% endif %} mr-2"></i>
+                                    {{ message }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    {% block customer_content %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Simple Footer for Customer Portal -->
+    <footer class="bg-blue-800 text-white py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <i class="fas fa-wrench text-xl mr-2"></i>
+                    <span class="text-xl font-bold">SPRO PLUMBING</span>
+                </div>
+                <div class="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6 text-sm">
+                    <div class="flex items-center">
+                        <i class="fas fa-phone mr-2"></i>
+                        <a href="tel:+16475518342" class="hover:text-blue-300">(647) 551-8342</a>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fab fa-whatsapp mr-2"></i>
+                        <a href="https://wa.me/16475122111" class="hover:text-blue-300">(647) 512-2111</a>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-envelope mr-2"></i>
+                        <span>info@sproplumbing.com</span>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-600 mt-4 pt-4 text-center text-gray-300 text-sm">
+                <p>&copy; 2024 SPRO PLUMBING. All rights reserved. Licensed & Insured.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile sidebar toggle functionality
+        const mobileSidebarBtn = document.getElementById('mobile-sidebar-btn');
+        const mobileSidebar = document.getElementById('mobile-sidebar');
+        const mobileSidebarOverlay = document.getElementById('mobile-sidebar-overlay');
+        const closeMobileSidebar = document.getElementById('close-mobile-sidebar');
+        const mobileSidebarIcon = document.getElementById('mobile-sidebar-icon');
+
+        function openMobileSidebar() {
+            mobileSidebar.classList.remove('-translate-x-full');
+            mobileSidebar.classList.add('translate-x-0');
+            mobileSidebarOverlay.classList.remove('opacity-0', 'invisible');
+            mobileSidebarOverlay.classList.add('opacity-100', 'visible');
+            mobileSidebarIcon.classList.remove('fa-bars');
+            mobileSidebarIcon.classList.add('fa-times');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileSidebarFunc() {
+            mobileSidebar.classList.remove('translate-x-0');
+            mobileSidebar.classList.add('-translate-x-full');
+            mobileSidebarOverlay.classList.remove('opacity-100', 'visible');
+            mobileSidebarOverlay.classList.add('opacity-0', 'invisible');
+            mobileSidebarIcon.classList.remove('fa-times');
+            mobileSidebarIcon.classList.add('fa-bars');
+            document.body.style.overflow = '';
+        }
+
+        if (mobileSidebarBtn) {
+            mobileSidebarBtn.addEventListener('click', function() {
+                if (mobileSidebar.classList.contains('-translate-x-full')) {
+                    openMobileSidebar();
+                } else {
+                    closeMobileSidebarFunc();
+                }
+            });
+        }
+
+        if (closeMobileSidebar) {
+            closeMobileSidebar.addEventListener('click', closeMobileSidebarFunc);
+        }
+
+        if (mobileSidebarOverlay) {
+            mobileSidebarOverlay.addEventListener('click', closeMobileSidebarFunc);
+        }
+
+        const mobileNavLinks = document.querySelectorAll('#mobile-sidebar nav a');
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', closeMobileSidebarFunc);
+        });
+
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 1024) {
+                closeMobileSidebarFunc();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !mobileSidebar.classList.contains('-translate-x-full')) {
+                closeMobileSidebarFunc();
+            }
+        });
+    </script>
+</body>
+</html>

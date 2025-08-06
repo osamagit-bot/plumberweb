@@ -62,7 +62,7 @@
             </div>
             
             <div class="hero-buttons flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="{% url 'booking' %}" class="hero-btn-primary btn-advanced px-8 py-4 rounded-xl font-semibold text-primary-blue text-lg shadow-lg">
+                <a href="{% url 'main:booking' %}" class="hero-btn-primary btn-advanced px-8 py-4 rounded-xl font-semibold text-primary-blue text-lg shadow-lg">
                     <i class="fas fa-calendar-check mr-2"></i>Book Service Now
                 </a>
                 <a href="tel:+16475518342" class="hero-btn-secondary btn-advanced px-8 py-4 rounded-xl font-semibold text-white text-lg shadow-lg">
@@ -164,7 +164,7 @@
         </div>
         
         <div class="text-center mt-8">
-            <a href="{% url 'services' %}" class="bg-primary-blue text-white px-6 py-3 rounded-lg hover:bg-dark-blue transition">
+            <a href="{% url 'main:services' %}" class="bg-primary-blue text-white px-6 py-3 rounded-lg hover:bg-dark-blue transition">
                 View All Services
             </a>
         </div>
@@ -335,7 +335,7 @@
         
         <!-- Review Actions -->
         <div class="text-center mt-12">
-            <a href="{% url 'feedback' %}" class="inline-flex items-center bg-primary-blue text-white px-6 py-3 rounded-lg hover:bg-dark-blue transition mb-4">
+            <a href="{% url 'main:feedback' %}" class="inline-flex items-center bg-primary-blue text-white px-6 py-3 rounded-lg hover:bg-dark-blue transition mb-4">
                 <i class="fas fa-star mr-2"></i>
                 Leave a Review
             </a>
@@ -404,10 +404,10 @@
         <h2 class="text-3xl font-bold mb-4">Need Plumbing Service?</h2>
         <p class="text-xl mb-8">Don't wait for small problems to become big ones. Contact us today!</p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="{% url 'booking' %}" class="bg-white text-primary-blue px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+            <a href="{% url 'main:booking' %}" class="bg-white text-primary-blue px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
                 Schedule Service
             </a>
-            <a href="{% url 'contact' %}" class="border-2 border-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary-blue transition">
+            <a href="{% url 'main:contact' %}" class="border-2 border-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary-blue transition">
                 Get Free Quote
             </a>
         </div>

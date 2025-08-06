@@ -1,0 +1,230 @@
+{% extends 'base.html' %}
+
+{% block title %}Customer Registration - SPRO Plumbing{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 py-12 px-4">
+    <div class="max-w-md mx-auto">
+        <!-- Header Section -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-primary-blue rounded-full mb-4">
+                <i class="fas fa-user-plus text-white text-2xl"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Create Account</h1>
+            <p class="text-gray-600">Join SPRO Plumbing to manage your bookings and service history</p>
+        </div>
+
+        <!-- Registration Form -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="mb-6 p-4 rounded-lg border-l-4 {% if message.tags == 'error' %}bg-red-50 border-red-400 text-red-700{% elif message.tags == 'success' %}bg-green-50 border-green-400 text-green-700{% else %}bg-blue-50 border-blue-400 text-blue-700{% endif %}">
+                        <div class="flex items-center">
+                            <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'success' %}fa-check-circle{% else %}fa-info-circle{% endif %} mr-2"></i>
+                            {{ message }}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Name Fields -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-user mr-1 text-gray-400"></i>First Name <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="{{ form.first_name.name }}" id="{{ form.first_name.id_for_label }}" 
+                               value="{{ form.first_name.value|default:'' }}" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent transition duration-200 bg-gray-50 focus:bg-white" 
+                               placeholder="Enter first name" required>
+                        {% if form.first_name.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.first_name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-user mr-1 text-gray-400"></i>Last Name <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="{{ form.last_name.name }}" id="{{ form.last_name.id_for_label }}" 
+                               value="{{ form.last_name.value|default:'' }}" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent transition duration-200 bg-gray-50 focus:bg-white" 
+                               placeholder="Enter last name" required>
+                        {% if form.last_name.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.last_name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Username Field -->
+                <div>
+                    <label for="{{ form.username.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="fas fa-at mr-1 text-gray-400"></i>Username <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}" 
+                           value="{{ form.username.value|default:'' }}" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent transition duration-200 bg-gray-50 focus:bg-white" 
+                           placeholder="Choose a username" required>
+                    {% if form.username.help_text %}
+                        <p class="mt-1 text-xs text-gray-500">{{ form.username.help_text }}</p>
+                    {% endif %}
+                    {% if form.username.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.username.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Email Field -->
+                <div>
+                    <label for="{{ form.email.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="fas fa-envelope mr-1 text-gray-400"></i>Email Address <span class="text-red-500">*</span>
+                    </label>
+                    <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" 
+                           value="{{ form.email.value|default:'' }}" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent transition duration-200 bg-gray-50 focus:bg-white" 
+                           placeholder="Enter your email" required>
+                    {% if form.email.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.email.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Phone Field -->
+                <div>
+                    <label for="{{ form.phone.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="fas fa-phone mr-1 text-gray-400"></i>Phone Number
+                    </label>
+                    <input type="tel" name="{{ form.phone.name }}" id="{{ form.phone.id_for_label }}" 
+                           value="{{ form.phone.value|default:'' }}" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent transition duration-200 bg-gray-50 focus:bg-white" 
+                           placeholder="(647) 123-4567">
+                    {% if form.phone.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.phone.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Password Fields -->
+                <div>
+                    <label for="{{ form.password1.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="fas fa-lock mr-1 text-gray-400"></i>Password <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <input type="password" name="{{ form.password1.name }}" id="{{ form.password1.id_for_label }}" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent transition duration-200 bg-gray-50 focus:bg-white pr-12" 
+                               placeholder="Create a strong password" required>
+                        <button type="button" onclick="togglePassword('{{ form.password1.id_for_label }}', this)" 
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    {% if form.password1.help_text %}
+                        <p class="mt-1 text-xs text-gray-500">{{ form.password1.help_text }}</p>
+                    {% endif %}
+                    {% if form.password1.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.password1.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label for="{{ form.password2.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="fas fa-lock mr-1 text-gray-400"></i>Confirm Password <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <input type="password" name="{{ form.password2.name }}" id="{{ form.password2.id_for_label }}" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent transition duration-200 bg-gray-50 focus:bg-white pr-12" 
+                               placeholder="Confirm your password" required>
+                        <button type="button" onclick="togglePassword('{{ form.password2.id_for_label }}', this)" 
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    {% if form.password2.help_text %}
+                        <p class="mt-1 text-xs text-gray-500">{{ form.password2.help_text }}</p>
+                    {% endif %}
+                    {% if form.password2.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.password2.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <div class="flex items-center text-red-700">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            <span class="text-sm">{{ form.non_field_errors.0 }}</span>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Submit Button -->
+                <button type="submit" 
+                        class="w-full bg-gradient-to-r from-primary-blue to-light-blue text-white font-semibold py-3 px-6 rounded-lg hover:from-dark-blue hover:to-primary-blue transform hover:scale-105 transition duration-200 shadow-lg hover:shadow-xl">
+                    <i class="fas fa-user-plus mr-2"></i>Create Account
+                </button>
+            </form>
+
+            <!-- Benefits Section -->
+            <div class="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                <h3 class="text-sm font-semibold text-blue-900 mb-3 flex items-center">
+                    <i class="fas fa-star mr-2 text-blue-600"></i>Account Benefits
+                </h3>
+                <ul class="space-y-2 text-xs text-blue-800">
+                    <li class="flex items-center"><i class="fas fa-check mr-2 text-blue-600"></i>Track your service history</li>
+                    <li class="flex items-center"><i class="fas fa-check mr-2 text-blue-600"></i>Quick booking and quotes</li>
+                    <li class="flex items-center"><i class="fas fa-check mr-2 text-blue-600"></i>Priority customer support</li>
+                    <li class="flex items-center"><i class="fas fa-check mr-2 text-blue-600"></i>Exclusive offers and discounts</li>
+                </ul>
+            </div>
+
+            <!-- Footer Links -->
+            <div class="mt-8 text-center space-y-4">
+                <div class="flex items-center justify-center space-x-2 text-sm text-gray-600">
+                    <span>Already have an account?</span>
+                    <a href="{% url 'customers:login' %}" class="text-primary-blue hover:text-dark-blue font-semibold transition duration-200">
+                        Login here
+                    </a>
+                </div>
+                <div class="pt-4 border-t border-gray-100">
+                    <a href="{% url 'main:home' %}" class="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 transition duration-200">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trust Indicators -->
+        <div class="mt-8 text-center">
+            <div class="flex items-center justify-center space-x-6 text-xs text-gray-500">
+                <div class="flex items-center">
+                    <i class="fas fa-shield-alt mr-1 text-green-500"></i>
+                    <span>Secure & Encrypted</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-user-shield mr-1 text-blue-500"></i>
+                    <span>Privacy Protected</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-certificate mr-1 text-yellow-500"></i>
+                    <span>Licensed & Insured</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function togglePassword(fieldId, button) {
+    const field = document.getElementById(fieldId);
+    const icon = button.querySelector('i');
+    
+    if (field.type === 'password') {
+        field.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        field.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+</script>
+{% endblock %}

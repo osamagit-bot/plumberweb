@@ -1,1 +1,1 @@
-# Core constants and utilities
+# Core module for shared utilities

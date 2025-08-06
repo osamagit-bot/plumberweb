@@ -1,0 +1,345 @@
+{% extends 'customers/base.html' %}
+
+{% block title %}Quote Details - Customer Portal{% endblock %}
+
+{% block breadcrumb %}
+<a href="{% url 'customers:quotes' %}" class="text-blue-200 hover:text-white transition">Quotes</a>
+<i class="fas fa-chevron-right text-blue-300 text-xs mx-2"></i>
+<span class="text-white">Quote #{{ quote.id }}</span>
+{% endblock %}
+
+{% block customer_content %}
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+    <div>
+        <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+            <i class="fas fa-file-invoice-dollar mr-3 text-green-500"></i>Quote #{{ quote.id }}
+        </h2>
+        <p class="text-gray-600 mt-2">View your quote details and pricing</p>
+    </div>
+    <div class="mt-4 sm:mt-0">
+        <span class="px-3 py-2 rounded-full text-sm font-semibold
+            {% if quote.status == 'pending' %}bg-yellow-100 text-yellow-800
+            {% elif quote.status == 'quoted' %}bg-blue-100 text-blue-800
+            {% elif quote.status == 'accepted' %}bg-green-100 text-green-800
+            {% elif quote.status == 'declined' %}bg-red-100 text-red-800
+            {% else %}bg-gray-100 text-gray-800{% endif %}">
+            {{ quote.get_status_display }}
+        </span>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2 space-y-6">
+        <!-- Quote Details -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                <i class="fas fa-info-circle mr-2 text-green-500"></i>Quote Information
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600 mb-2">Service</label>
+                    <p class="text-gray-900 font-medium">{{ quote.service.name }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600 mb-2">Requested Date</label>
+                    <p class="text-gray-900 font-medium">{{ quote.created_at|date:"F d, Y g:i A" }}</p>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-200 pt-6 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">Customer</label>
+                        <div class="text-gray-900">
+                            <p class="font-medium">{{ quote.customer_name }}</p>
+                            <p class="text-sm text-gray-600">{{ quote.email }}</p>
+                            {% if quote.phone %}<p class="text-sm text-gray-600">{{ quote.phone }}</p>{% endif %}
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">Service Address</label>
+                        <p class="text-gray-900">{{ quote.address|linebreaksbr }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            {% if quote.notes %}
+            <div class="border-t border-gray-200 pt-6 mb-6">
+                <label class="block text-sm font-semibold text-gray-600 mb-2">Your Notes</label>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <p class="text-gray-900">{{ quote.notes|linebreaksbr }}</p>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if quote.admin_notes and quote.status != 'pending' %}
+            <div class="border-t border-gray-200 pt-6">
+                <label class="block text-sm font-semibold text-gray-600 mb-2">Our Response</label>
+                <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                    <p class="text-blue-900">{{ quote.admin_notes|linebreaksbr }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Selected Options -->
+        {% if quote.selected_options %}
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                <i class="fas fa-list-check mr-2 text-purple-500"></i>Selected Options
+            </h3>
+            <div class="space-y-3">
+                {% for option in quote.selected_options %}
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <span class="text-gray-900 font-medium">{{ option.name }}</span>
+                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">${{ option.price|floatformat:2 }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="space-y-6">
+        <!-- Pricing Summary -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                <i class="fas fa-calculator mr-2 text-blue-500"></i>Pricing
+            </h3>
+            
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <span class="font-semibold text-gray-700">Initial Estimate:</span>
+                    <span class="text-gray-900 font-semibold">
+                        {% if quote.estimated_total %}
+                            ${{ quote.estimated_total|floatformat:2 }}
+                        {% else %}
+                            <span class="text-gray-400">Calculating...</span>
+                        {% endif %}
+                    </span>
+                </div>
+                {% if quote.final_quote %}
+                <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg border border-green-200">
+                    <span class="font-bold text-green-800">Final Quote:</span>
+                    <span class="text-green-900 font-bold text-lg">${{ quote.final_quote|floatformat:2 }}</span>
+                </div>
+                {% endif %}
+            </div>
+            
+            {% if quote.status == 'quoted' %}
+                <div class="mt-6 space-y-3">
+                    <button onclick="acceptQuote()" class="w-full bg-green-500 text-white py-3 px-4 rounded-lg hover:bg-green-600 transition duration-200 font-semibold">
+                        <i class="fas fa-check mr-2"></i>Accept Quote
+                    </button>
+                    <button onclick="declineQuote()" class="w-full border border-red-500 text-red-500 py-3 px-4 rounded-lg hover:bg-red-500 hover:text-white transition duration-200">
+                        <i class="fas fa-times mr-2"></i>Decline Quote
+                    </button>
+                </div>
+            {% elif quote.status == 'accepted' %}
+                <div class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg text-center">
+                    <i class="fas fa-check-circle text-green-500 text-2xl mb-2"></i>
+                    <p class="font-semibold text-green-800">Quote Accepted!</p>
+                    <p class="text-sm text-green-600">We'll contact you soon to schedule the work.</p>
+                </div>
+            {% elif quote.status == 'declined' %}
+                <div class="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-lg text-center">
+                    <i class="fas fa-times-circle text-gray-500 text-2xl mb-2"></i>
+                    <p class="font-semibold text-gray-700">Quote Declined</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Status Timeline -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                <i class="fas fa-clock mr-2 text-orange-500"></i>Status Timeline
+            </h3>
+            
+            <div class="space-y-4">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 w-8 h-8 {% if quote.status == 'pending' %}bg-blue-500 animate-pulse{% else %}bg-green-500{% endif %} rounded-full flex items-center justify-center">
+                        <i class="fas fa-paper-plane text-white text-xs"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="font-semibold text-gray-900">Quote Requested</p>
+                        <p class="text-sm text-gray-500">{{ quote.created_at|date:"M d, Y g:i A" }}</p>
+                    </div>
+                </div>
+                
+                {% if quote.status != 'pending' %}
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 w-8 h-8 {% if quote.status == 'in_review' %}bg-blue-500 animate-pulse{% elif quote.status == 'quoted' or quote.status == 'accepted' or quote.status == 'declined' %}bg-green-500{% else %}bg-gray-300{% endif %} rounded-full flex items-center justify-center">
+                        <i class="fas fa-search text-white text-xs"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="font-semibold text-gray-900">Under Review</p>
+                        <p class="text-sm text-gray-500">{{ quote.updated_at|date:"M d, Y g:i A" }}</p>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if quote.status == 'quoted' or quote.status == 'accepted' or quote.status == 'declined' %}
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 w-8 h-8 {% if quote.status == 'quoted' %}bg-blue-500 animate-pulse{% else %}bg-green-500{% endif %} rounded-full flex items-center justify-center">
+                        <i class="fas fa-file-invoice-dollar text-white text-xs"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="font-semibold text-gray-900">Quote Provided</p>
+                        <p class="text-sm text-gray-500">{{ quote.updated_at|date:"M d, Y g:i A" }}</p>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if quote.status == 'accepted' %}
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                        <i class="fas fa-handshake text-white text-xs"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="font-semibold text-gray-900">Quote Accepted</p>
+                        <p class="text-sm text-gray-500">{{ quote.updated_at|date:"M d, Y g:i A" }}</p>
+                    </div>
+                </div>
+                {% elif quote.status == 'declined' %}
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                        <i class="fas fa-times text-white text-xs"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="font-semibold text-gray-900">Quote Declined</p>
+                        <p class="text-sm text-gray-500">{{ quote.updated_at|date:"M d, Y g:i A" }}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-tools mr-2 text-purple-500"></i>Actions
+            </h3>
+            
+            <div class="space-y-3">
+                <a href="{% url 'customers:quotes' %}" class="w-full inline-flex items-center justify-center px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition duration-200">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Quotes
+                </a>
+                <a href="{% url 'quotes:quote_calculator' %}" class="w-full inline-flex items-center justify-center px-4 py-3 border border-blue-500 text-blue-500 rounded-lg hover:bg-blue-500 hover:text-white transition duration-200">
+                    <i class="fas fa-plus mr-2"></i>Request New Quote
+                </a>
+                {% if quote.status == 'accepted' %}
+                <a href="{% url 'customers:quick_booking' %}" class="w-full inline-flex items-center justify-center px-4 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-200">
+                    <i class="fas fa-calendar-check mr-2"></i>Schedule Service
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="fixed top-4 right-4 z-50 transform translate-x-full transition-transform duration-300 ease-in-out">
+    <div class="bg-blue-600 text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3">
+        <i id="toast-icon" class="fas fa-info-circle"></i>
+        <span id="toast-message">Message</span>
+        <button onclick="hideToast()" class="ml-4 text-white hover:text-gray-200">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+    <div class="bg-white rounded-2xl p-6 max-w-md mx-4 shadow-xl">
+        <div class="text-center">
+            <i id="confirmIcon" class="fas fa-question-circle text-blue-500 text-4xl mb-4"></i>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Confirm Action</h3>
+            <p id="confirmMessage" class="text-gray-600 mb-6">Are you sure you want to proceed?</p>
+            <div class="flex space-x-3">
+                <button onclick="hideConfirmModal()" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition duration-200">
+                    Cancel
+                </button>
+                <button id="confirmButton" class="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-200">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showToast(message, type = 'info') {
+    const toast = document.getElementById('toast');
+    const icon = document.getElementById('toast-icon');
+    const messageEl = document.getElementById('toast-message');
+    const toastDiv = toast.firstElementChild;
+    
+    messageEl.textContent = message;
+    
+    if (type === 'success') {
+        toastDiv.className = 'bg-green-600 text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3';
+        icon.className = 'fas fa-check-circle';
+    } else if (type === 'error') {
+        toastDiv.className = 'bg-red-600 text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3';
+        icon.className = 'fas fa-exclamation-circle';
+    } else if (type === 'warning') {
+        toastDiv.className = 'bg-yellow-600 text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3';
+        icon.className = 'fas fa-exclamation-triangle';
+    } else {
+        toastDiv.className = 'bg-blue-600 text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3';
+        icon.className = 'fas fa-info-circle';
+    }
+    
+    toast.classList.remove('translate-x-full');
+    toast.classList.add('translate-x-0');
+    
+    setTimeout(() => hideToast(), 5000);
+}
+
+function hideToast() {
+    const toast = document.getElementById('toast');
+    toast.classList.remove('translate-x-0');
+    toast.classList.add('translate-x-full');
+}
+
+function showConfirmModal(message, onConfirm, type = 'accept') {
+    const icon = document.getElementById('confirmIcon');
+    const button = document.getElementById('confirmButton');
+    
+    document.getElementById('confirmMessage').textContent = message;
+    
+    if (type === 'decline') {
+        icon.className = 'fas fa-times-circle text-red-500 text-4xl mb-4';
+        button.className = 'flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-200';
+        button.textContent = 'Decline';
+    } else {
+        icon.className = 'fas fa-check-circle text-green-500 text-4xl mb-4';
+        button.className = 'flex-1 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-200';
+        button.textContent = 'Accept';
+    }
+    
+    document.getElementById('confirmModal').classList.remove('hidden');
+    button.onclick = () => {
+        hideConfirmModal();
+        onConfirm();
+    };
+}
+
+function hideConfirmModal() {
+    document.getElementById('confirmModal').classList.add('hidden');
+}
+
+function acceptQuote() {
+    showConfirmModal('Are you sure you want to accept this quote? We will contact you to schedule the work.', () => {
+        showToast('Quote acceptance feature will be implemented soon. Please contact us directly.', 'warning');
+    }, 'accept');
+}
+
+function declineQuote() {
+    showConfirmModal('Are you sure you want to decline this quote?', () => {
+        showToast('Quote decline feature will be implemented soon. Please contact us directly.', 'warning');
+    }, 'decline');
+}
+</script>
+{% endblock %}

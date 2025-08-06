@@ -68,10 +68,20 @@ plumber_site/
 ├── main/              # Main app (views, URLs)
 ├── services/          # Services and testimonials models
 ├── bookings/          # Booking and contact models
+├── areas/             # Location management
+├── blog/              # Blog functionality
+├── quotes/            # Quote calculator
+├── monitoring/        # Health checks & monitoring
+├── core/              # Shared utilities
 ├── templates/         # HTML templates
-├── static/           # Static files (CSS, JS, images)
-├── media/            # User uploaded files
-└── plumber_site/     # Django project settings
+├── static/            # Static files (CSS, JS, images)
+├── media/             # User uploaded files
+├── scripts/           # Management & backup scripts
+├── docs/              # Documentation
+├── deployment/        # Production configs
+├── logs/              # Application logs
+├── backups/           # Backup storage
+└── plumber_site/      # Django project settings
 ```
 
 ## Pages

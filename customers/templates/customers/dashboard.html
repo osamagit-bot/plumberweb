@@ -1,0 +1,189 @@
+{% extends 'customers/base.html' %}
+
+{% block title %}Dashboard - Customer Portal{% endblock %}
+
+{% block breadcrumb %}
+<span class="text-white">Dashboard</span>
+{% endblock %}
+
+{% block customer_content %}
+<!-- Page Header -->
+<div class="mb-8">
+    <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+        <i class="fas fa-tachometer-alt mr-3 text-primary-blue"></i>Dashboard Overview
+    </h2>
+    <p class="text-gray-600 mt-2">Manage your bookings, quotes, and account information</p>
+</div>
+
+<!-- Statistics Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-100">
+        <div class="text-3xl font-bold text-primary-blue mb-2">{{ total_bookings }}</div>
+        <div class="text-gray-600 text-sm uppercase tracking-wide font-semibold">Total Bookings</div>
+        <div class="mt-3">
+            <i class="fas fa-calendar-check text-primary-blue text-2xl"></i>
+        </div>
+    </div>
+    <div class="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-100">
+        <div class="text-3xl font-bold text-yellow-500 mb-2">{{ pending_bookings }}</div>
+        <div class="text-gray-600 text-sm uppercase tracking-wide font-semibold">Pending Bookings</div>
+        <div class="mt-3">
+            <i class="fas fa-clock text-yellow-500 text-2xl"></i>
+        </div>
+    </div>
+    <div class="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-100">
+        <div class="text-3xl font-bold text-green-500 mb-2">{{ total_quotes }}</div>
+        <div class="text-gray-600 text-sm uppercase tracking-wide font-semibold">Total Quotes</div>
+        <div class="mt-3">
+            <i class="fas fa-file-invoice-dollar text-green-500 text-2xl"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-100">
+    <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+        <i class="fas fa-bolt mr-2 text-yellow-500"></i>Quick Actions
+    </h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <a href="{% url 'customers:profile' %}" class="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-4 rounded-lg hover:from-purple-600 hover:to-purple-700 transition duration-200 text-center group">
+            <i class="fas fa-user-edit text-xl mb-2 group-hover:scale-110 transition-transform"></i>
+            <div class="font-semibold">Update Profile</div>
+        </a>
+        <a href="{% url 'main:contact' %}" class="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4 rounded-lg hover:from-orange-600 hover:to-orange-700 transition duration-200 text-center group">
+            <i class="fas fa-phone text-xl mb-2 group-hover:scale-110 transition-transform"></i>
+            <div class="font-semibold">Contact Support</div>
+        </a>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Recent Bookings -->
+    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+        <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+            <i class="fas fa-calendar-alt mr-2 text-primary-blue"></i>Recent Bookings
+        </h3>
+        {% if recent_bookings %}
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-gray-200">
+                            <th class="text-left py-3 text-sm font-semibold text-gray-600">Service</th>
+                            <th class="text-left py-3 text-sm font-semibold text-gray-600">Date</th>
+                            <th class="text-left py-3 text-sm font-semibold text-gray-600">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        {% for booking in recent_bookings %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-3">
+                                <a href="{% url 'customers:booking_detail' booking.id %}" class="text-primary-blue hover:text-dark-blue font-medium">
+                                    {{ booking.service|capfirst }}
+                                </a>
+                            </td>
+                            <td class="py-3 text-gray-600 text-sm">{{ booking.preferred_date|date:"M d, Y" }}</td>
+                            <td class="py-3">
+                                {% if booking.is_confirmed %}
+                                    <span class="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                                        <i class="fas fa-check-circle mr-1"></i>Confirmed
+                                    </span>
+                                {% else %}
+                                    <span class="px-2 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">
+                                        <i class="fas fa-clock mr-1"></i>Pending Confirmation
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-center mt-6">
+                <a href="{% url 'customers:bookings' %}" class="inline-flex items-center px-4 py-2 border border-primary-blue text-primary-blue rounded-lg hover:bg-primary-blue hover:text-white transition duration-200">
+                    View All Bookings
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+        {% else %}
+            <div class="text-center py-8">
+                <i class="fas fa-calendar-plus text-gray-300 text-4xl mb-4"></i>
+                <p class="text-gray-500 mb-4">No bookings yet</p>
+                <a href="{% url 'customers:quick_booking' %}" class="inline-flex items-center px-4 py-2 bg-primary-blue text-white rounded-lg hover:bg-dark-blue transition duration-200">
+                    <i class="fas fa-plus mr-2"></i>Create your first booking
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Recent Quotes -->
+    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+        <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+            <i class="fas fa-file-invoice-dollar mr-2 text-green-500"></i>Recent Quotes
+        </h3>
+        {% if recent_quotes %}
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-gray-200">
+                            <th class="text-left py-3 text-sm font-semibold text-gray-600">Service</th>
+                            <th class="text-left py-3 text-sm font-semibold text-gray-600">Amount</th>
+                            <th class="text-left py-3 text-sm font-semibold text-gray-600">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        {% for quote in recent_quotes %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-3">
+                                <a href="{% url 'customers:quote_detail' quote.id %}" class="text-primary-blue hover:text-dark-blue font-medium">
+                                    {{ quote.service_type|capfirst }}
+                                </a>
+                            </td>
+                            <td class="py-3 text-gray-600 text-sm font-semibold">
+                                {% if quote.total_cost %}
+                                    ${{ quote.total_cost|floatformat:2 }}
+                                {% else %}
+                                    <span class="text-gray-400">Pending</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-3">
+                                <span class="px-2 py-1 rounded-full text-xs font-semibold
+                                    {% if quote.status == 'pending' %}bg-yellow-100 text-yellow-800
+                                    {% elif quote.status == 'in_review' %}bg-blue-100 text-blue-800
+                                    {% elif quote.status == 'quoted' %}bg-purple-100 text-purple-800
+                                    {% elif quote.status == 'accepted' %}bg-green-100 text-green-800
+                                    {% elif quote.status == 'declined' %}bg-red-100 text-red-800
+                                    {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                    {% if quote.status == 'pending' %}<i class="fas fa-clock mr-1"></i>
+                                    {% elif quote.status == 'in_review' %}<i class="fas fa-search mr-1"></i>
+                                    {% elif quote.status == 'quoted' %}<i class="fas fa-file-invoice-dollar mr-1"></i>
+                                    {% elif quote.status == 'accepted' %}<i class="fas fa-check-circle mr-1"></i>
+                                    {% elif quote.status == 'declined' %}<i class="fas fa-times-circle mr-1"></i>
+                                    {% endif %}
+                                    {{ quote.get_status_display }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-center mt-6">
+                <a href="{% url 'customers:quotes' %}" class="inline-flex items-center px-4 py-2 border border-green-500 text-green-500 rounded-lg hover:bg-green-500 hover:text-white transition duration-200">
+                    View All Quotes
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+        {% else %}
+            <div class="text-center py-8">
+                <i class="fas fa-calculator text-gray-300 text-4xl mb-4"></i>
+                <p class="text-gray-500 mb-4">No quotes yet</p>
+                <a href="{% url 'quotes:quote_calculator' %}" class="inline-flex items-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-200">
+                    <i class="fas fa-plus mr-2"></i>Request your first quote
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+
+{% endblock %}

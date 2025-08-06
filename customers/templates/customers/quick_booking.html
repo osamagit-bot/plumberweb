@@ -1,0 +1,219 @@
+{% extends 'customers/base.html' %}
+
+{% block title %}Quick Booking - Customer Portal{% endblock %}
+
+{% block breadcrumb %}
+<a href="{% url 'customers:bookings' %}" class="text-blue-200 hover:text-white transition">Bookings</a>
+<i class="fas fa-chevron-right text-blue-300 text-xs mx-2"></i>
+<span class="text-white">Quick Booking</span>
+{% endblock %}
+
+{% block customer_content %}
+<div class="mb-8">
+    <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+        <i class="fas fa-plus-circle mr-3 text-primary-blue"></i>Quick Booking
+    </h2>
+    <p class="text-gray-600 mt-2">Schedule your plumbing service quickly and easily</p>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2">
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                <i class="fas fa-calendar-plus mr-2 text-primary-blue"></i>Schedule a Service
+            </h3>
+            
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="fas fa-wrench mr-1 text-gray-400"></i>Service Type <span class="text-red-500">*</span>
+                    </label>
+                    <select name="{{ form.service.name }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent transition duration-200 bg-gray-50 focus:bg-white">
+                        {% for choice in form.service %}
+                            {{ choice.tag }}
+                        {% endfor %}
+                    </select>
+                    {% if form.service.help_text %}
+                        <p class="mt-1 text-sm text-gray-600">{{ form.service.help_text }}</p>
+                    {% endif %}
+                    {% if form.service.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.service.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-calendar mr-1 text-gray-400"></i>Preferred Date <span class="text-red-500">*</span>
+                        </label>
+                        <input type="date" name="{{ form.preferred_date.name }}" id="{{ form.preferred_date.id_for_label }}" value="{{ form.preferred_date.value|default:'' }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent transition duration-200 bg-gray-50 focus:bg-white">
+                        {% if form.preferred_date.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.preferred_date.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-clock mr-1 text-gray-400"></i>Preferred Time <span class="text-red-500">*</span>
+                        </label>
+                        <select name="{{ form.preferred_time.name }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent transition duration-200 bg-gray-50 focus:bg-white">
+                            {% for choice in form.preferred_time %}
+                                {{ choice.tag }}
+                            {% endfor %}
+                        </select>
+                        {% if form.preferred_time.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.preferred_time.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="fas fa-comment mr-1 text-gray-400"></i>Description <span class="text-red-500">*</span>
+                    </label>
+                    <textarea name="{{ form.description.name }}" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent transition duration-200 bg-gray-50 focus:bg-white" placeholder="Please describe the plumbing issue in detail...">{{ form.description.value|default:'' }}</textarea>
+                    {% if form.description.help_text %}
+                        <p class="mt-1 text-xs text-gray-500">{{ form.description.help_text }}</p>
+                    {% endif %}
+                    {% if form.description.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.description.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <label class="flex items-start">
+                        <input type="checkbox" name="{{ form.is_emergency.name }}" {% if form.is_emergency.value %}checked{% endif %} class="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 rounded focus:ring-red-500 focus:ring-2 mt-1">
+                        <div class="ml-3">
+                            <span class="text-sm font-semibold text-red-800">This is an emergency</span>
+                            {% if form.is_emergency.help_text %}
+                                <p class="text-xs text-red-600 mt-1">{{ form.is_emergency.help_text }}</p>
+                            {% endif %}
+                        </div>
+                    </label>
+                    {% if form.is_emergency.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.is_emergency.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                {% if form.non_field_errors %}
+                    <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <div class="flex items-center text-red-700">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            <span class="text-sm">{{ form.non_field_errors.0 }}</span>
+                        </div>
+                    </div>
+                {% endif %}
+                
+                <div class="flex flex-col sm:flex-row sm:justify-between gap-4">
+                    <a href="{% url 'customers:bookings' %}" class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition duration-200">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Bookings
+                    </a>
+                    <button type="submit" class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-primary-blue to-light-blue text-white rounded-lg hover:from-dark-blue hover:to-primary-blue transform hover:scale-105 transition duration-200 shadow-lg hover:shadow-xl">
+                        <i class="fas fa-calendar-check mr-2"></i>Submit Booking Request
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="space-y-6">
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-info-circle mr-2 text-blue-500"></i>Your Information
+            </h3>
+            
+            <div class="space-y-3 text-sm">
+                <div class="flex items-center">
+                    <i class="fas fa-user w-4 mr-3 text-gray-400"></i>
+                    <span>{{ customer_profile.full_name }}</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-envelope w-4 mr-3 text-gray-400"></i>
+                    <span>{{ user.email }}</span>
+                </div>
+                {% if customer_profile.phone %}
+                    <div class="flex items-center">
+                        <i class="fas fa-phone w-4 mr-3 text-gray-400"></i>
+                        <span>{{ customer_profile.phone }}</span>
+                    </div>
+                {% endif %}
+                {% if customer_profile.full_address %}
+                    <div class="flex items-start">
+                        <i class="fas fa-map-marker-alt w-4 mr-3 text-gray-400 mt-0.5"></i>
+                        <span>{{ customer_profile.full_address }}</span>
+                    </div>
+                {% endif %}
+            </div>
+            
+            {% if not customer_profile.phone or not customer_profile.full_address %}
+                <div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <div class="flex items-start">
+                        <i class="fas fa-exclamation-triangle text-yellow-500 mr-2 mt-0.5"></i>
+                        <div class="text-xs text-yellow-800">
+                            Complete your <a href="{% url 'customers:profile' %}" class="underline hover:no-underline">profile</a> for faster booking processing.
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-clock mr-2 text-green-500"></i>What to Expect
+            </h3>
+            
+            <ol class="space-y-3 text-sm">
+                <li class="flex items-start">
+                    <span class="flex-shrink-0 w-6 h-6 bg-primary-blue text-white rounded-full flex items-center justify-center text-xs font-semibold mr-3 mt-0.5">1</span>
+                    <div>
+                        <div class="font-semibold text-gray-900">Booking Submitted</div>
+                        <div class="text-gray-600">We'll receive your request immediately</div>
+                    </div>
+                </li>
+                <li class="flex items-start">
+                    <span class="flex-shrink-0 w-6 h-6 bg-primary-blue text-white rounded-full flex items-center justify-center text-xs font-semibold mr-3 mt-0.5">2</span>
+                    <div>
+                        <div class="font-semibold text-gray-900">Confirmation</div>
+                        <div class="text-gray-600">We'll contact you within 1-2 hours</div>
+                    </div>
+                </li>
+                <li class="flex items-start">
+                    <span class="flex-shrink-0 w-6 h-6 bg-primary-blue text-white rounded-full flex items-center justify-center text-xs font-semibold mr-3 mt-0.5">3</span>
+                    <div>
+                        <div class="font-semibold text-gray-900">Service Appointment</div>
+                        <div class="text-gray-600">Our technician arrives on time</div>
+                    </div>
+                </li>
+                <li class="flex items-start">
+                    <span class="flex-shrink-0 w-6 h-6 bg-primary-blue text-white rounded-full flex items-center justify-center text-xs font-semibold mr-3 mt-0.5">4</span>
+                    <div>
+                        <div class="font-semibold text-gray-900">Service Completion</div>
+                        <div class="text-gray-600">You'll receive documentation</div>
+                    </div>
+                </li>
+            </ol>
+        </div>
+        
+        <div class="bg-red-50 rounded-2xl shadow-lg p-6 border border-red-100">
+            <h3 class="text-lg font-semibold text-red-900 mb-4 flex items-center">
+                <i class="fas fa-phone-alt mr-2 text-red-600"></i>Need Immediate Help?
+            </h3>
+            <p class="text-sm text-red-700 mb-4">For emergencies, call us directly:</p>
+            <a href="tel:+16475518342" class="w-full inline-flex items-center justify-center px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-200 font-semibold">
+                <i class="fas fa-phone mr-2"></i>Emergency: (647) 551-8342
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dateInput = document.getElementById('{{ form.preferred_date.id_for_label }}');
+    if (dateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
+    }
+});
+</script>
+{% endblock %}

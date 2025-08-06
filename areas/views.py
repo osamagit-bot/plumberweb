@@ -12,6 +12,7 @@ from core.email_utils import (
     send_admin_booking_notification,
     send_admin_contact_notification
 )
+from main.forms import BookingForm, ContactForm
 
 def get_service_area_by_slug(location_slug):
     """Find ServiceArea by matching slugified name"""
@@ -76,30 +77,33 @@ def location_booking(request, location_slug):
     service_area = get_service_area_by_slug(location_slug)
     
     if request.method == 'POST':
-        booking = Booking(
-            customer_name=request.POST['customer_name'],
-            email=request.POST['email'],
-            phone=request.POST['phone'],
-            address=request.POST['address'],
-            service_id=request.POST['service'],
-            service_area=service_area,
-            urgency=request.POST['urgency'],
-            preferred_date=request.POST['preferred_date'],
-            description=request.POST['description']
-        )
-        booking.save()
+        # Create form data with service_area pre-filled
+        form_data = request.POST.copy()
+        form_data['service_area'] = service_area.id
         
-        # Send confirmation email to customer
-        email_sent = send_booking_confirmation_email(booking)
-        
-        # Send notification to admin
-        admin_notified = send_admin_booking_notification(booking)
-        
-        if email_sent:
-            messages.success(request, f'Booking request submitted for {service_area.name}! Check your email for confirmation. We will contact you soon.')
+        form = BookingForm(form_data)
+        if form.is_valid():
+            booking = form.save(commit=False)
+            booking.service_area = service_area
+            booking.save()
+            
+            # Send confirmation email to customer
+            try:
+                email_sent = send_booking_confirmation_email(booking)
+                admin_notified = send_admin_booking_notification(booking)
+            except Exception as e:
+                email_sent = False
+            
+            if email_sent:
+                messages.success(request, f'Booking request submitted for {service_area.name}! Check your email for confirmation. We will contact you soon.')
+            else:
+                messages.success(request, f'Booking request submitted for {service_area.name}! We will contact you soon.')
+            return redirect('location_booking', location_slug=slugify(service_area.name))
         else:
-            messages.success(request, f'Booking request submitted for {service_area.name}! We will contact you soon.')
-        return redirect('location_booking', location_slug=slugify(service_area.name))
+            # Form has validation errors
+            messages.error(request, 'Please correct the errors below and try again.')
+    else:
+        form = BookingForm()
     
     services = Service.objects.all()
     
@@ -109,7 +113,8 @@ def location_booking(request, location_slug):
     
     context = {
         'service_area': service_area,
-        'services': services
+        'services': services,
+        'form': form
     }
     return render(request, 'location_booking.html', context)
 
@@ -117,31 +122,40 @@ def location_contact(request, location_slug):
     service_area = get_service_area_by_slug(location_slug)
     
     if request.method == 'POST':
-        contact_message = ContactMessage(
-            name=request.POST['name'],
-            email=request.POST['email'],
-            phone=request.POST.get('phone', ''),
-            subject=request.POST['subject'],
-            message=request.POST['message'],
-            service_area=service_area
-        )
-        contact_message.save()
+        # Create form data with service_area pre-filled
+        form_data = request.POST.copy()
+        form_data['service_area'] = service_area.id
         
-        # Send confirmation email to customer
-        email_sent = send_contact_confirmation_email(contact_message)
-        
-        # Send notification to admin
-        admin_notified = send_admin_contact_notification(contact_message)
-        
-        if email_sent:
-            messages.success(request, f'Message sent successfully from {service_area.name}! Check your email for confirmation. We will get back to you soon.')
+        form = ContactForm(form_data)
+        if form.is_valid():
+            contact_message = form.save(commit=False)
+            contact_message.service_area = service_area
+            contact_message.save()
+            
+            # Send confirmation email to customer
+            try:
+                email_sent = send_contact_confirmation_email(contact_message)
+                admin_notified = send_admin_contact_notification(contact_message)
+            except Exception as e:
+                email_sent = False
+            
+            if email_sent:
+                messages.success(request, f'Message sent successfully from {service_area.name}! Check your email for confirmation. We will get back to you soon.')
+            else:
+                messages.success(request, f'Message sent successfully from {service_area.name}! We will get back to you soon.')
+            return redirect('location_contact', location_slug=slugify(service_area.name))
         else:
-            messages.success(request, f'Message sent successfully from {service_area.name}! We will get back to you soon.')
-        return redirect('location_contact', location_slug=slugify(service_area.name))
+            # Form has validation errors
+            messages.error(request, 'Please correct the errors below and try again.')
+    else:
+        form = ContactForm()
     
     # Add slug to service_area for template URLs
     if service_area:
         service_area.slug = slugify(service_area.name)
     
-    context = {'service_area': service_area}
+    context = {
+        'service_area': service_area,
+        'form': form
+    }
     return render(request, 'location_contact.html', context)

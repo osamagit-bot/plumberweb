@@ -15,6 +15,16 @@ class Booking(models.Model):
         ('cancelled', 'Cancelled'),
     ]
 
+    # Link to customer account (optional for backwards compatibility)
+    customer = models.ForeignKey(
+        'customers.CustomerProfile',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='bookings'
+    )
+    
+    # Original fields (kept for backwards compatibility)
     customer_name = models.CharField(max_length=100)
     email = models.EmailField()
     phone = PhoneNumberField(region='CA')

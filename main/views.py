@@ -2,6 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db.models import Prefetch, Avg, Count
 from django.utils.text import slugify
+from django.utils.html import escape
+from django.core.exceptions import ValidationError
+from django_ratelimit.decorators import ratelimit
+import logging
+
+logger = logging.getLogger(__name__)
 from services.models import Service, Testimonial, FAQ
 from areas.models import ServiceArea
 from bookings.models import Booking, ContactMessage
@@ -85,6 +91,7 @@ def services_view(request):
     return render(request, 'services.html', context)
 
 
+# @ratelimit(key='ip', rate='5/m', method='POST')  # Enable for production
 def booking_view(request):
     if request.method == 'POST':
         form = BookingForm(request.POST)
@@ -92,10 +99,13 @@ def booking_view(request):
             booking = form.save()
             
             # Send confirmation email to customer
-            email_sent = send_booking_confirmation_email(booking)
-            
-            # Send notification to admin
-            admin_notified = send_admin_booking_notification(booking)
+            try:
+                email_sent = send_booking_confirmation_email(booking)
+                admin_notified = send_admin_booking_notification(booking)
+                logger.info(f'Booking created: {booking.id}')
+            except Exception as e:
+                logger.error(f'Email sending failed for booking {booking.id}: {str(e)}')
+                email_sent = False
             
             if email_sent:
                 messages.success(
@@ -107,7 +117,7 @@ def booking_view(request):
                     request, 
                     'Booking request submitted successfully! We will contact you soon.'
                 )
-            return redirect('booking')
+            return redirect('main:booking')
         else:
             messages.error(
                 request, 
@@ -125,6 +135,7 @@ def booking_view(request):
     return render(request, 'booking.html', context)
 
 
+# @ratelimit(key='ip', rate='5/m', method='POST')  # Enable for production
 def contact_view(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
@@ -132,10 +143,13 @@ def contact_view(request):
             contact_message = form.save()
             
             # Send confirmation email to customer
-            email_sent = send_contact_confirmation_email(contact_message)
-            
-            # Send notification to admin
-            admin_notified = send_admin_contact_notification(contact_message)
+            try:
+                email_sent = send_contact_confirmation_email(contact_message)
+                admin_notified = send_admin_contact_notification(contact_message)
+                logger.info(f'Contact message created: {contact_message.id}')
+            except Exception as e:
+                logger.error(f'Email sending failed for contact {contact_message.id}: {str(e)}')
+                email_sent = False
             
             if email_sent:
                 messages.success(
@@ -147,7 +161,7 @@ def contact_view(request):
                     request, 
                     'Message sent successfully! We will get back to you soon.'
                 )
-            return redirect('contact')
+            return redirect('main:contact')
         else:
             messages.error(
                 request, 
@@ -161,10 +175,10 @@ def contact_view(request):
 
 
 def gallery_view(request):
-    # Get filter parameters
-    category_filter = request.GET.get('category', 'all')
-    service_filter = request.GET.get('service', 'all')
-    location_filter = request.GET.get('location', 'all')
+    # Get filter parameters with validation
+    category_filter = escape(request.GET.get('category', 'all'))
+    service_filter = escape(request.GET.get('service', 'all'))
+    location_filter = escape(request.GET.get('location', 'all'))
     
     # Base queryset
     images = GalleryImage.objects.filter(is_active=True).select_related('service', 'location')
@@ -198,6 +212,7 @@ def gallery_view(request):
     return render(request, 'gallery.html', context)
 
 
+# @ratelimit(key='ip', rate='3/m', method='POST')  # Enable for production
 def feedback_view(request):
     """Customer feedback form view"""
     if request.method == 'POST':
@@ -211,7 +226,7 @@ def feedback_view(request):
                 request, 
                 'Thank you for your feedback! Your review has been submitted and will be published after approval.'
             )
-            return redirect('feedback')
+            return redirect('main:feedback')
         else:
             messages.error(
                 request, 

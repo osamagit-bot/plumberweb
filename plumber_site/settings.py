@@ -17,7 +17,7 @@ environ.Env.read_env(BASE_DIR / '.env')
 
 SECRET_KEY = env('DJANGO_SECRET_KEY')
 
-DEBUG = env('DEBUG')
+DEBUG = env('DEBUG', default=False)
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
 
@@ -38,18 +38,30 @@ INSTALLED_APPS = [
     'areas',
     'blog',
     'quotes',
+    'customers',
 ]
+
+# Add production apps only in production
+if not DEBUG:
+    INSTALLED_APPS.extend([
+        'django_ratelimit',
+        'monitoring',
+    ])
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    'core.middleware.SeparateSessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# Add production middleware
+if not DEBUG:
+    MIDDLEWARE.append('monitoring.middleware.MonitoringMiddleware')
 
 ROOT_URLCONF = 'plumber_site.urls'
 
@@ -71,12 +83,35 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'plumber_site.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# Database Configuration
+if env('DATABASE_URL', default=None):
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.parse(env('DATABASE_URL'))
     }
-}
+else:
+    # Use SQLite for development, MySQL for production
+    if DEBUG:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
+    else:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.mysql',
+                'NAME': env('DB_NAME', default='plumber_db'),
+                'USER': env('DB_USER', default='root'),
+                'PASSWORD': env('DB_PASSWORD', default=''),
+                'HOST': env('DB_HOST', default='localhost'),
+                'PORT': env('DB_PORT', default='3306'),
+                'OPTIONS': {
+                    'sql_mode': 'traditional',
+                }
+            }
+        }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -116,9 +151,9 @@ PHONENUMBER_DEFAULT_REGION = 'CA'
 
 # Email Configuration
 # For testing: console backend (emails print to terminal)
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # For production: SMTP backend (actually sends emails)
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = env('EMAIL_HOST', default='smtp.gmail.com')
 EMAIL_PORT = env('EMAIL_PORT', default=587)
 EMAIL_USE_TLS = env('EMAIL_USE_TLS', default=True)
@@ -149,7 +184,107 @@ PASSWORD_HASHERS = [
     # 'django.contrib.auth.hashers.Argon2PasswordHasher',  # Install argon2-cffi to use
 ]
 
+# Authentication Settings
+LOGIN_URL = '/portal/login/'
+LOGIN_REDIRECT_URL = '/portal/dashboard/'
+LOGOUT_REDIRECT_URL = '/'
+
 # Jazzmin settings
+# Logging Configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': BASE_DIR / 'logs' / 'django.log',
+            'maxBytes': 1024*1024*15,  # 15MB
+            'backupCount': 10,
+            'formatter': 'verbose',
+        },
+        'security_file': {
+            'level': 'WARNING',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': BASE_DIR / 'logs' / 'security.log',
+            'maxBytes': 1024*1024*15,
+            'backupCount': 10,
+            'formatter': 'verbose',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'django.security': {
+            'handlers': ['security_file'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+        'plumber_site': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
+
+# Rate Limiting
+RATELIMIT_ENABLE = env('RATELIMIT_ENABLE', default=not DEBUG)
+if not DEBUG:
+    RATELIMIT_USE_CACHE = 'default'
+
+# Cache Configuration
+if DEBUG:
+    # Use locmem cache for development
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'unique-snowflake',
+        }
+    }
+else:
+    # Use Redis for production
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': env('REDIS_URL', default='redis://127.0.0.1:6379/1'),
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            },
+            'KEY_PREFIX': 'plumber_site',
+            'TIMEOUT': 300,
+        }
+    }
+
+# Session Configuration
+if not DEBUG:
+    SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+    SESSION_CACHE_ALIAS = 'default'
+SESSION_COOKIE_AGE = 3600  # 1 hour
+
+# Separate admin and customer sessions
+SESSION_COOKIE_NAME = 'sessionid'
+ADMIN_SESSION_COOKIE_NAME = 'admin_sessionid'
+CUSTOMER_SESSION_COOKIE_NAME = 'customer_sessionid'
+
 JAZZMIN_SETTINGS = {
     "site_title": "SPRO Plumbing Admin",
     "site_header": "SPRO Plumbing",

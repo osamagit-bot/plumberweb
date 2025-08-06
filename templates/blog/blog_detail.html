@@ -36,7 +36,7 @@
         <div class="mt-8 p-6 bg-blue-50 rounded-lg">
             <h3 class="text-xl font-bold mb-2">Need Professional Help?</h3>
             <p class="mb-4">If you need assistance with {{ post.related_service.name|lower }}, our licensed plumbers are here to help.</p>
-            <a href="{% url 'booking' %}" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Book Service Now</a>
+            <a href="{% url 'main:booking' %}" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Book Service Now</a>
         </div>
         {% endif %}
     </article>

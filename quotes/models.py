@@ -29,6 +29,23 @@ class QuoteOption(models.Model):
 
 
 class QuoteRequest(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('in_review', 'In Review'),
+        ('quoted', 'Quoted'),
+        ('accepted', 'Accepted'),
+        ('declined', 'Declined'),
+    ]
+    
+    # Link to customer account (optional for backwards compatibility)
+    customer = models.ForeignKey(
+        'customers.CustomerProfile',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='quote_requests'
+    )
+    
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     customer_name = models.CharField(max_length=100)
     email = models.EmailField()
@@ -36,8 +53,12 @@ class QuoteRequest(models.Model):
     address = models.TextField()
     selected_options = models.JSONField(default=list)
     estimated_total = models.DecimalField(max_digits=8, decimal_places=2)
+    final_quote = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     notes = models.TextField(blank=True)
+    admin_notes = models.TextField(blank=True, help_text="Internal notes for staff")
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
         ordering = ['-created_at']

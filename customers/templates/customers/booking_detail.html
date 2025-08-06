@@ -1,0 +1,374 @@
+{% extends 'customers/base.html' %}
+
+{% block title %}Booking Details - Customer Portal{% endblock %}
+
+{% csrf_token %}
+
+{% block breadcrumb %}
+<a href="{% url 'customers:bookings' %}" class="text-blue-200 hover:text-white transition">Bookings</a>
+<i class="fas fa-chevron-right text-blue-300 text-xs mx-2"></i>
+<span class="text-white">Booking #{{ booking.id }}</span>
+{% endblock %}
+
+{% block customer_content %}
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+    <div>
+        <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+            <i class="fas fa-calendar-alt mr-3 text-primary-blue"></i>Booking #{{ booking.id }}
+        </h2>
+        <p class="text-gray-600 mt-2">View your booking details and status</p>
+    </div>
+    <div class="mt-4 sm:mt-0 flex items-center space-x-3">
+        {% if booking.is_confirmed %}
+            <span class="px-3 py-2 rounded-full text-sm font-semibold bg-green-100 text-green-800">
+                <i class="fas fa-check-circle mr-1"></i>Confirmed
+            </span>
+        {% else %}
+            <span class="px-3 py-2 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-800">
+                <i class="fas fa-clock mr-1"></i>Pending Confirmation
+            </span>
+        {% endif %}
+        {% if booking.urgency == 'emergency' %}
+            <span class="px-3 py-2 bg-red-100 text-red-800 rounded-full text-sm font-semibold">
+                <i class="fas fa-exclamation-triangle mr-1"></i>{{ booking.get_urgency_display }}
+            </span>
+        {% elif booking.urgency == 'urgent' %}
+            <span class="px-3 py-2 bg-orange-100 text-orange-800 rounded-full text-sm font-semibold">
+                {{ booking.get_urgency_display }}
+            </span>
+        {% endif %}
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2 space-y-6">
+        <!-- Booking Details -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                <i class="fas fa-info-circle mr-2 text-primary-blue"></i>Service Information
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600 mb-2">Service</label>
+                    <p class="text-gray-900 font-medium">{{ booking.service.name }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600 mb-2">Preferred Date & Time</label>
+                    <p class="text-gray-900 font-medium">{{ booking.preferred_date|date:"F d, Y g:i A" }}</p>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-200 pt-6 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">Customer</label>
+                        <div class="text-gray-900">
+                            <p class="font-medium">{{ booking.customer_name }}</p>
+                            <p class="text-sm text-gray-600">{{ booking.email }}</p>
+                            {% if booking.phone %}<p class="text-sm text-gray-600">{{ booking.phone }}</p>{% endif %}
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">Service Address</label>
+                        <p class="text-gray-900">{{ booking.address|linebreaksbr }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-200 pt-6">
+                <label class="block text-sm font-semibold text-gray-600 mb-2">Problem Description</label>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <p class="text-gray-900">{{ booking.description|linebreaksbr }}</p>
+                </div>
+            </div>
+            
+            {% if booking.notes %}
+            <div class="border-t border-gray-200 pt-6 mt-6">
+                <label class="block text-sm font-semibold text-gray-600 mb-2">Technician Notes</label>
+                <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                    <p class="text-blue-900">{{ booking.notes|linebreaksbr }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        {% if booking.service_area %}
+        <!-- Service Area Info -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-map-marker-alt mr-2 text-green-500"></i>Service Area
+            </h3>
+            <p class="font-semibold text-gray-900 mb-4">{{ booking.service_area.name }}</p>
+            {% if booking.service_area.map_embed %}
+                <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
+                    {{ booking.service_area.map_embed|safe }}
+                </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="space-y-6">
+        <!-- Status & Actions -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                <i class="fas fa-tasks mr-2 text-purple-500"></i>Booking Status
+            </h3>
+            
+            <!-- Status Timeline -->
+            <div class="space-y-4">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                        <i class="fas fa-paper-plane text-white text-xs"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="font-semibold text-gray-900">Booking Requested</p>
+                        <p class="text-sm text-gray-500">{{ booking.created_at|date:"M d, Y g:i A" }}</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 w-8 h-8 {% if booking.is_confirmed %}bg-green-500{% else %}bg-blue-500 animate-pulse{% endif %} rounded-full flex items-center justify-center">
+                        <i class="fas {% if booking.is_confirmed %}fa-check{% else %}fa-clock{% endif %} text-white text-xs"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="font-semibold text-gray-900">{% if booking.is_confirmed %}Confirmed{% else %}Pending Confirmation{% endif %}</p>
+                        <p class="text-sm text-gray-500">{% if booking.is_confirmed %}Appointment scheduled{% else %}Waiting for confirmation{% endif %}</p>
+                    </div>
+                </div>
+                
+                {% if booking.status == 'confirmed' or booking.status == 'in_progress' or booking.status == 'completed' %}
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 w-8 h-8 {% if booking.status == 'confirmed' %}bg-blue-500 animate-pulse{% else %}bg-green-500{% endif %} rounded-full flex items-center justify-center">
+                        <i class="fas fa-check text-white text-xs"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="font-semibold text-gray-900">Confirmed</p>
+                        <p class="text-sm text-gray-500">Appointment scheduled</p>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if booking.status == 'in_progress' or booking.status == 'completed' %}
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 w-8 h-8 {% if booking.status == 'in_progress' %}bg-blue-500 animate-pulse{% else %}bg-green-500{% endif %} rounded-full flex items-center justify-center">
+                        <i class="fas fa-tools text-white text-xs"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="font-semibold text-gray-900">In Progress</p>
+                        <p class="text-sm text-gray-500">Technician on-site</p>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if booking.status == 'completed' %}
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                        <i class="fas fa-check-circle text-white text-xs"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="font-semibold text-gray-900">Completed</p>
+                        <p class="text-sm text-gray-500">{{ booking.updated_at|date:"M d, Y g:i A" }}</p>
+                    </div>
+                </div>
+                {% elif booking.status == 'cancelled' %}
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                        <i class="fas fa-times text-white text-xs"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="font-semibold text-gray-900">Cancelled</p>
+                        <p class="text-sm text-gray-500">{{ booking.updated_at|date:"M d, Y g:i A" }}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Contact Information -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-phone mr-2 text-green-500"></i>Need Help?
+            </h3>
+            
+            <div class="space-y-3">
+                {% if booking.urgency == 'emergency' %}
+                    <a href="tel:+16475518342" class="w-full inline-flex items-center justify-center px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-200 font-semibold">
+                        <i class="fas fa-phone mr-2"></i>Emergency Line
+                    </a>
+                {% else %}
+                    <a href="tel:+16475518342" class="w-full inline-flex items-center justify-center px-4 py-3 bg-primary-blue text-white rounded-lg hover:bg-dark-blue transition duration-200 font-semibold">
+                        <i class="fas fa-phone mr-2"></i>Call Us
+                    </a>
+                {% endif %}
+                
+                <a href="{% url 'main:contact' %}" class="w-full inline-flex items-center justify-center px-4 py-3 border border-primary-blue text-primary-blue rounded-lg hover:bg-primary-blue hover:text-white transition duration-200">
+                    <i class="fas fa-envelope mr-2"></i>Send Message
+                </a>
+                
+                {% if not booking.is_confirmed and booking.status != 'cancelled' and booking.status != 'completed' %}
+                    <button onclick="cancelBooking()" class="w-full inline-flex items-center justify-center px-4 py-3 border border-red-500 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition duration-200">
+                        <i class="fas fa-times mr-2"></i>Cancel Booking
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-tools mr-2 text-orange-500"></i>Actions
+            </h3>
+            
+            <div class="space-y-3">
+                <a href="{% url 'customers:bookings' %}" class="w-full inline-flex items-center justify-center px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition duration-200">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Bookings
+                </a>
+                
+                {% if booking.status == 'completed' %}
+                    <a href="{% url 'customers:quick_booking' %}" class="w-full inline-flex items-center justify-center px-4 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-200">
+                        <i class="fas fa-redo mr-2"></i>Book Similar Service
+                    </a>
+                    <a href="{% url 'main:feedback' %}" class="w-full inline-flex items-center justify-center px-4 py-3 border border-yellow-500 text-yellow-600 rounded-lg hover:bg-yellow-500 hover:text-white transition duration-200">
+                        <i class="fas fa-star mr-2"></i>Leave Review
+                    </a>
+                {% else %}
+                    <a href="{% url 'customers:quick_booking' %}" class="w-full inline-flex items-center justify-center px-4 py-3 border border-green-500 text-green-500 rounded-lg hover:bg-green-500 hover:text-white transition duration-200">
+                        <i class="fas fa-plus mr-2"></i>Book Another Service
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Service Details -->
+        {% if booking.service %}
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-wrench mr-2 text-blue-500"></i>About This Service
+            </h3>
+            
+            <div class="space-y-3">
+                <div>
+                    <p class="font-semibold text-gray-900">{{ booking.service.name }}</p>
+                </div>
+                {% if booking.service.description %}
+                    <div>
+                        <p class="text-sm text-gray-600">{{ booking.service.description|truncatechars:100 }}</p>
+                    </div>
+                {% endif %}
+                {% if booking.service.price_range %}
+                    <div class="bg-blue-50 rounded-lg p-3">
+                        <p class="text-blue-900 font-semibold text-sm">
+                            <span class="text-blue-600">Typical Range:</span> {{ booking.service.price_range }}
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="fixed top-4 right-4 z-50 transform translate-x-full transition-transform duration-300 ease-in-out">
+    <div class="bg-blue-600 text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3">
+        <i id="toast-icon" class="fas fa-info-circle"></i>
+        <span id="toast-message">Message</span>
+        <button onclick="hideToast()" class="ml-4 text-white hover:text-gray-200">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+    <div class="bg-white rounded-2xl p-6 max-w-md mx-4 shadow-xl">
+        <div class="text-center">
+            <i class="fas fa-exclamation-triangle text-yellow-500 text-4xl mb-4"></i>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Confirm Action</h3>
+            <p id="confirmMessage" class="text-gray-600 mb-6">Are you sure you want to proceed?</p>
+            <div class="flex space-x-3">
+                <button onclick="hideConfirmModal()" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition duration-200">
+                    Cancel
+                </button>
+                <button id="confirmButton" class="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-200">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showToast(message, type = 'info') {
+    const toast = document.getElementById('toast');
+    const icon = document.getElementById('toast-icon');
+    const messageEl = document.getElementById('toast-message');
+    const toastDiv = toast.firstElementChild;
+    
+    messageEl.textContent = message;
+    
+    if (type === 'success') {
+        toastDiv.className = 'bg-green-600 text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3';
+        icon.className = 'fas fa-check-circle';
+    } else if (type === 'error') {
+        toastDiv.className = 'bg-red-600 text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3';
+        icon.className = 'fas fa-exclamation-circle';
+    } else if (type === 'warning') {
+        toastDiv.className = 'bg-yellow-600 text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3';
+        icon.className = 'fas fa-exclamation-triangle';
+    } else {
+        toastDiv.className = 'bg-blue-600 text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3';
+        icon.className = 'fas fa-info-circle';
+    }
+    
+    toast.classList.remove('translate-x-full');
+    toast.classList.add('translate-x-0');
+    
+    setTimeout(() => hideToast(), 5000);
+}
+
+function hideToast() {
+    const toast = document.getElementById('toast');
+    toast.classList.remove('translate-x-0');
+    toast.classList.add('translate-x-full');
+}
+
+function showConfirmModal(message, onConfirm) {
+    document.getElementById('confirmMessage').textContent = message;
+    document.getElementById('confirmModal').classList.remove('hidden');
+    document.getElementById('confirmButton').onclick = () => {
+        hideConfirmModal();
+        onConfirm();
+    };
+}
+
+function hideConfirmModal() {
+    document.getElementById('confirmModal').classList.add('hidden');
+}
+
+function cancelBooking() {
+    showConfirmModal('Are you sure you want to cancel this booking? This action cannot be undone.', () => {
+        // Create form and submit
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/portal/bookings/{{ booking.id }}/cancel/`;
+        
+        // Add CSRF token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+                         document.querySelector('meta[name="csrf-token"]')?.content;
+        if (csrfToken) {
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = csrfToken;
+            form.appendChild(csrfInput);
+        }
+        
+        document.body.appendChild(form);
+        form.submit();
+    });
+}
+</script>
+{% endblock %}

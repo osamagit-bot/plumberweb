@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block title %}Customer Login - SPRO Plumbing{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 py-12 px-4">
+    <div class="max-w-md mx-auto">
+        <!-- Header Section -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-primary-blue rounded-full mb-4">
+                <i class="fas fa-sign-in-alt text-white text-2xl"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
+            <p class="text-gray-600">Sign in to your SPRO Plumbing account</p>
+        </div>
+
+        <!-- Login Form -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="mb-6 p-4 rounded-lg border-l-4 {% if message.tags == 'error' %}bg-red-50 border-red-400 text-red-700{% elif message.tags == 'success' %}bg-green-50 border-green-400 text-green-700{% else %}bg-blue-50 border-blue-400 text-blue-700{% endif %}">
+                        <div class="flex items-center">
+                            <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'success' %}fa-check-circle{% else %}fa-info-circle{% endif %} mr-2"></i>
+                            {{ message }}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Username Field -->
+                <div>
+                    <label for="{{ form.username.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="fas fa-user mr-1 text-gray-400"></i>Username
+                    </label>
+                    <input type="text" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}" 
+                           value="{{ form.username.value|default:'' }}" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent transition duration-200 bg-gray-50 focus:bg-white" 
+                           placeholder="Enter your username" required>
+                    {% if form.username.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.username.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Password Field -->
+                <div>
+                    <label for="{{ form.password.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="fas fa-lock mr-1 text-gray-400"></i>Password
+                    </label>
+                    <div class="relative">
+                        <input type="password" name="{{ form.password.name }}" id="{{ form.password.id_for_label }}" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent transition duration-200 bg-gray-50 focus:bg-white pr-12" 
+                               placeholder="Enter your password" required>
+                        <button type="button" onclick="togglePassword('{{ form.password.id_for_label }}', this)" 
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    {% if form.password.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.password.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <div class="flex items-center text-red-700">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            <span class="text-sm">{{ form.non_field_errors.0 }}</span>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Submit Button -->
+                <button type="submit" 
+                        class="w-full bg-gradient-to-r from-primary-blue to-light-blue text-white font-semibold py-3 px-6 rounded-lg hover:from-dark-blue hover:to-primary-blue transform hover:scale-105 transition duration-200 shadow-lg hover:shadow-xl">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Sign In
+                </button>
+            </form>
+
+            <!-- Quick Actions -->
+            <div class="mt-8 space-y-4">
+                <div class="text-center">
+                    <a href="{% url 'customers:password_reset' %}" class="text-sm text-primary-blue hover:text-dark-blue font-semibold transition duration-200">
+                        <i class="fas fa-key mr-1"></i>Forgot your password?
+                    </a>
+                </div>
+                
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-200"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">or</span>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <span class="text-sm text-gray-600">Don't have an account?</span>
+                    <a href="{% url 'customers:register' %}" class="ml-1 text-sm text-primary-blue hover:text-dark-blue font-semibold transition duration-200">
+                        Register here
+                    </a>
+                </div>
+            </div>
+
+            <!-- Footer Links -->
+            <div class="mt-8 pt-6 border-t border-gray-100 text-center">
+                <a href="{% url 'main:home' %}" class="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 transition duration-200">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Home
+                </a>
+            </div>
+        </div>
+
+        <!-- Quick Access Features -->
+        <div class="mt-8 grid grid-cols-2 gap-4">
+            <a href="{% url 'main:booking' %}" class="bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition duration-200 text-center border border-gray-100">
+                <i class="fas fa-calendar-plus text-primary-blue text-xl mb-2"></i>
+                <p class="text-sm font-semibold text-gray-700">Quick Booking</p>
+                <p class="text-xs text-gray-500">Schedule service</p>
+            </a>
+            <a href="{% url 'quotes:quote_calculator' %}" class="bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition duration-200 text-center border border-gray-100">
+                <i class="fas fa-calculator text-green-500 text-xl mb-2"></i>
+                <p class="text-sm font-semibold text-gray-700">Get Quote</p>
+                <p class="text-xs text-gray-500">Free estimate</p>
+            </a>
+        </div>
+
+        <!-- Trust Indicators -->
+        <div class="mt-8 text-center">
+            <div class="flex items-center justify-center space-x-6 text-xs text-gray-500">
+                <div class="flex items-center">
+                    <i class="fas fa-shield-alt mr-1 text-green-500"></i>
+                    <span>Secure Login</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-clock mr-1 text-blue-500"></i>
+                    <span>24/7 Support</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-star mr-1 text-yellow-500"></i>
+                    <span>5-Star Service</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function togglePassword(fieldId, button) {
+    const field = document.getElementById(fieldId);
+    const icon = button.querySelector('i');
+    
+    if (field.type === 'password') {
+        field.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        field.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+</script>
+{% endblock %}

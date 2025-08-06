@@ -6,9 +6,20 @@ from services.models import Service, Testimonial
 from bookings.models import Booking, ContactMessage
 from areas.models import ServiceArea
 from core.constants import URGENCY_CHOICES, RATING_CHOICES
+from core.validators import clean_phone_number
 
 
 class BookingForm(forms.ModelForm):
+    # Override the phone field to use our custom validation
+    phone = forms.CharField(
+        max_length=128,
+        widget=forms.TextInput(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+            'placeholder': 'e.g. (506) 234-5678 or 506-234-5678'
+        }),
+        help_text="Enter a valid Canadian phone number"
+    )
+    
     preferred_date = forms.DateTimeField(
         widget=forms.DateTimeInput(
             attrs={
@@ -33,10 +44,6 @@ class BookingForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={
                 'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent',
                 'placeholder': 'Enter your email address'
-            }),
-            'phone': forms.TextInput(attrs={
-                'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent',
-                'placeholder': 'Enter your phone number'
             }),
             'address': forms.Textarea(attrs={
                 'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent',
@@ -80,16 +87,21 @@ class BookingForm(forms.ModelForm):
 
     def clean_phone(self):
         phone = self.cleaned_data['phone']
-        # Basic phone validation
-        import re
-        phone_pattern = re.compile(r'^[\+]?[1-9][\d]{0,15}$')
-        cleaned_phone = re.sub(r'[^\d+]', '', phone)
-        if not phone_pattern.match(cleaned_phone):
-            raise forms.ValidationError("Please enter a valid phone number.")
-        return phone
+        return clean_phone_number(phone)
 
 
 class ContactForm(forms.ModelForm):
+    # Override the phone field to use our custom validation
+    phone = forms.CharField(
+        max_length=128,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+            'placeholder': 'e.g. (506) 234-5678 (optional)'
+        }),
+        help_text="Enter a valid Canadian phone number (optional)"
+    )
+    
     class Meta:
         model = ContactMessage
         fields = ['name', 'email', 'phone', 'subject', 'message', 'service_area']
@@ -101,10 +113,6 @@ class ContactForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={
                 'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent',
                 'placeholder': 'Enter your email address'
-            }),
-            'phone': forms.TextInput(attrs={
-                'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent',
-                'placeholder': 'Enter your phone number (optional)'
             }),
             'subject': forms.TextInput(attrs={
                 'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent',
@@ -127,19 +135,25 @@ class ContactForm(forms.ModelForm):
         self.fields['phone'].required = False
 
     def clean_phone(self):
-        phone = self.cleaned_data.get('phone', '')
+        phone = self.cleaned_data.get('phone')
         if phone:
-            # Basic phone validation if provided
-            import re
-            phone_pattern = re.compile(r'^[\+]?[1-9][\d]{0,15}$')
-            cleaned_phone = re.sub(r'[^\d+]', '', phone)
-            if not phone_pattern.match(cleaned_phone):
-                raise forms.ValidationError("Please enter a valid phone number.")
+            return clean_phone_number(phone)
         return phone
 
 
 class CustomerFeedbackForm(forms.ModelForm):
     """Form for customers to leave feedback after service completion"""
+    
+    # Override the phone field to use our custom validation
+    phone = forms.CharField(
+        max_length=128,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+            'placeholder': 'e.g. (506) 234-5678 (optional)'
+        }),
+        help_text="Enter a valid Canadian phone number (optional)"
+    )
     
     rating = forms.ChoiceField(
         choices=RATING_CHOICES,
@@ -160,10 +174,6 @@ class CustomerFeedbackForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={
                 'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent',
                 'placeholder': 'Enter your email address'
-            }),
-            'phone': forms.TextInput(attrs={
-                'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent',
-                'placeholder': 'Enter your phone number (optional)'
             }),
             'title': forms.TextInput(attrs={
                 'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent',
@@ -198,9 +208,5 @@ class CustomerFeedbackForm(forms.ModelForm):
     def clean_phone(self):
         phone = self.cleaned_data.get('phone', '')
         if phone:
-            import re
-            phone_pattern = re.compile(r'^[\+]?[1-9][\d]{0,15}$')
-            cleaned_phone = re.sub(r'[^\d+]', '', phone)
-            if not phone_pattern.match(cleaned_phone):
-                raise forms.ValidationError("Please enter a valid phone number.")
+            return clean_phone_number(phone)
         return phone
