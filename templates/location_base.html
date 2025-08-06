@@ -43,11 +43,11 @@
                 
                 <!-- Desktop Navigation -->
                 <div class="hidden lg:flex space-x-2 xl:space-x-4 items-center text-sm">
-                    <a href="{% url 'home' %}" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap">Home</a>
+                    <a href="{% url 'home' %}" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap font-semibold">Home</a>
                     
                     <!-- Services Dropdown -->
                     <div class="relative group">
-                        <a href="{% url 'services' %}" class="flex items-center text-gray-700 hover:text-primary-blue transition">
+                        <a href="{% url 'services' %}" class="flex items-center text-gray-700 hover:text-primary-blue transition font-semibold">
                             Services
                             <i class="fas fa-chevron-down ml-1 text-sm group-hover:rotate-180 transition-transform"></i>
                         </a>
@@ -72,25 +72,25 @@
                     
                     <!-- Company Dropdown -->
                     <div class="relative group">
-                        <button class="flex items-center text-gray-700 hover:text-primary-blue transition">
+                        <button class="flex font-semibold items-center text-gray-700 hover:text-primary-blue transition">
                             Company
                             <i class="fas fa-chevron-down ml-1 text-sm group-hover:rotate-180 transition-transform"></i>
                         </button>
                         <div class="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                             <div class="p-2">
-                                <a href="{% url 'home' %}#features" class="block py-2 px-3 text-sm text-gray-600 hover:text-primary-blue hover:bg-gray-50 rounded">Features</a>
-                                <a href="{% url 'gallery' %}" class="block py-2 px-3 text-sm text-gray-600 hover:text-primary-blue hover:bg-gray-50 rounded">Gallery</a>
-                                <a href="{% url 'home' %}#testimonials" class="block py-2 px-3 text-sm text-gray-600 hover:text-primary-blue hover:bg-gray-50 rounded">Testimonials</a>
-                                <a href="{% url 'feedback' %}" class="block py-2 px-3 text-sm text-gray-600 hover:text-primary-blue hover:bg-gray-50 rounded">Reviews</a>
-                                <a href="{% url 'blog_list' %}" class="block py-2 px-3 text-sm text-gray-600 hover:text-primary-blue hover:bg-gray-50 rounded">Blog</a>
+                                <a href="{% url 'home' %}#features" class="block py-2 px-3 text-sm text-gray-600 hover:text-primary-blue hover:bg-gray-50 rounded font-semibold">Features</a>
+                                <a href="{% url 'gallery' %}" class="block py-2 px-3 text-sm text-gray-600 hover:text-primary-blue hover:bg-gray-50 rounded font-semibold">Gallery</a>
+                                <a href="{% url 'home' %}#testimonials" class="block py-2 px-3 text-sm text-gray-600 hover:text-primary-blue hover:bg-gray-50 rounded font-semibold">Testimonials</a>
+                                <a href="{% url 'feedback' %}" class="block py-2 px-3 text-sm text-gray-600 hover:text-primary-blue hover:bg-gray-50 rounded font-semibold">Reviews</a>
+                                <a href="{% url 'blog_list' %}" class="block py-2 px-3 text-sm text-gray-600 hover:text-primary-blue hover:bg-gray-50 rounded font-semibold">Blog</a>
                             </div>
                         </div>
                     </div>
                     
-                    <a href="{% url 'home' %}#service-areas" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap">Locations</a>
-                    <a href="{% url 'quote_calculator' %}" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap">Get Quote</a>
-                    <a href="{% url 'home' %}#faq" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap">FAQ</a>
-                    <a href="{% url 'contact' %}" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap">Contact</a>
+                    <a href="{% url 'home' %}#service-areas" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap font-semibold">Locations</a>
+                    <a href="{% url 'quote_calculator' %}" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap font-semibold">Get Quote</a>
+                    <a href="{% url 'home' %}#faq" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap font-semibold">FAQ</a>
+                    <a href="{% url 'contact' %}" class="text-gray-700 hover:text-primary-blue transition whitespace-nowrap font-semibold">Contact</a>
                     <a href="{% url 'booking' %}" class="bg-gray-200 text-primary-blue font-semibold px-3 lg:px-4 py-2 rounded-lg hover:bg-primary-blue hover:text-white transition whitespace-nowrap">Book Now</a>
                 </div>
                 

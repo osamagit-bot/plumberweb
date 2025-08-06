@@ -49,22 +49,53 @@
         </div>
         <p class="text-xl text-gray-600">Based on {{ total_reviews }} reviews from {{ service_area.name }} customers</p>
         <div class="flex justify-center space-x-6 mt-4">
-            <div class="flex items-center space-x-2">
+            {% if service_area.google_business_url %}
+            <a href="{{ service_area.google_business_url }}" target="_blank" class="flex items-center space-x-2 hover:opacity-75 transition">
+                <i class="fab fa-google text-2xl text-blue-600"></i>
+                <span class="text-gray-600">Google</span>
+            </a>
+            {% else %}
+            <div class="flex items-center space-x-2 opacity-50">
                 <i class="fab fa-google text-2xl text-blue-600"></i>
                 <span class="text-gray-600">Google</span>
             </div>
-            <div class="flex items-center space-x-2">
+            {% endif %}
+            
+            {% if service_area.yelp_url %}
+            <a href="{{ service_area.yelp_url }}" target="_blank" class="flex items-center space-x-2 hover:opacity-75 transition">
+                <i class="fab fa-yelp text-2xl text-red-600"></i>
+                <span class="text-gray-600">Yelp</span>
+            </a>
+            {% else %}
+            <div class="flex items-center space-x-2 opacity-50">
                 <i class="fab fa-yelp text-2xl text-red-600"></i>
                 <span class="text-gray-600">Yelp</span>
             </div>
-            <div class="flex items-center space-x-2">
+            {% endif %}
+            
+            {% if service_area.trustpilot_url %}
+            <a href="{{ service_area.trustpilot_url }}" target="_blank" class="flex items-center space-x-2 hover:opacity-75 transition">
+                <i class="fas fa-star text-2xl text-green-600"></i>
+                <span class="text-gray-600">Trustpilot</span>
+            </a>
+            {% else %}
+            <div class="flex items-center space-x-2 opacity-50">
                 <i class="fas fa-star text-2xl text-green-600"></i>
                 <span class="text-gray-600">Trustpilot</span>
             </div>
-            <div class="flex items-center space-x-2">
+            {% endif %}
+            
+            {% if service_area.reddit_url %}
+            <a href="{{ service_area.reddit_url }}" target="_blank" class="flex items-center space-x-2 hover:opacity-75 transition">
+                <i class="fab fa-reddit text-2xl text-orange-600"></i>
+                <span class="text-gray-600">Reddit</span>
+            </a>
+            {% else %}
+            <div class="flex items-center space-x-2 opacity-50">
                 <i class="fab fa-reddit text-2xl text-orange-600"></i>
                 <span class="text-gray-600">Reddit</span>
             </div>
+            {% endif %}
         </div>
     </div>
 </section>

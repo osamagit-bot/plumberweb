@@ -4,7 +4,7 @@
 
 {% block content %}
 <!-- Page Header -->
-<section class="bg-gradient-to-r from-primary-blue to-light-blue text-white py-16">
+<section class="hero-section bg-gradient-to-r from-primary-blue to-light-blue text-white py-16">
     <div class="max-w-7xl mx-auto px-4 text-center">
         <h1 class="text-4xl font-bold mb-4">Our Work Gallery</h1>
         <p class="text-xl">See the quality of our plumbing services and satisfied customers</p>
@@ -118,10 +118,10 @@
                             <!-- Before/After Image Slider -->
                             <div class="relative w-full h-48 overflow-hidden">
                                 <div class="before-after-container relative w-full h-full">
-                                    <img src="{{ image.before_image.url }}" alt="Before - {{ image.title }}" 
+                                    <img src="{{ image.after_image.url }}" alt="After - {{ image.title }}" 
                                          class="absolute top-0 left-0 w-full h-full object-cover">
                                     <div class="after-image-container absolute top-0 left-0 w-1/2 h-full overflow-hidden">
-                                        <img src="{{ image.after_image.url }}" alt="After - {{ image.title }}" 
+                                        <img src="{{ image.before_image.url }}" alt="Before - {{ image.title }}" 
                                              class="w-full h-full object-cover">
                                     </div>
                                     <div class="slider-handle absolute top-0 left-1/2 w-1 h-full bg-white cursor-ew-resize z-10 transform -translate-x-1/2">

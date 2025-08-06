@@ -2,90 +2,83 @@
 {% load static %}
 
 {% block content %}
-<!-- Hero Section -->
-<section id="hero" class="relative h-screen overflow-hidden">
-    <!-- Slide 1 -->
-    <div class="hero-slide absolute inset-0 bg-cover bg-center bg-fixed transition-opacity duration-1000" style="background-image: url('{% static 'images/heroimage.webp' %}')">
-        <div class="absolute inset-0 bg-black bg-opacity-60"></div>
-        <div class="relative h-full flex items-center justify-center">
-            <div class="max-w-7xl mx-auto px-4 text-center text-white">
-                <h1 class="text-6xl font-bold mb-6">Professional Plumbing Services</h1>
-                <p class="text-2xl mb-8">24/7 Emergency Service • Licensed & Insured • Fast Response</p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="{% url 'booking' %}" class="bg-white text-primary-blue px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
-                        Book Service Now
-                    </a>
-                    <a href="tel:+16475518342" class="bg-red-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-red-700 transition">
-                        <i class="fas fa-phone mr-2"></i>Emergency Call
-                    </a>
+<!-- Advanced Hero Section -->
+<section id="hero" class="hero-container relative h-screen overflow-hidden">
+    <!-- Background Images -->
+    <div class="hero-slide hero-background absolute inset-0 bg-cover bg-center transition-opacity duration-1000" style="background-image: url('{% static 'images/heroimage.webp' %}')" data-slide="0"></div>
+    <div class="hero-slide hero-background absolute inset-0 bg-cover bg-center transition-opacity duration-1000 opacity-0" style="background-image: url('{% static 'images/heroimage2.webp' %}')" data-slide="1"></div>
+    <div class="hero-slide hero-background absolute inset-0 bg-cover bg-center transition-opacity duration-1000 opacity-0" style="background-image: url('{% static 'images/heroimage3.webp' %}')" data-slide="2"></div>
+    <div class="hero-slide hero-background absolute inset-0 bg-cover bg-center transition-opacity duration-1000 opacity-0" style="background-image: url('{% static 'images/heroimage4.webp' %}')" data-slide="3"></div>
+    
+    <!-- Static Overlay -->
+    <div class="hero-overlay absolute inset-0"></div>
+    
+    <!-- Particles Background -->
+    <div class="particles absolute inset-0 pointer-events-none">
+        <div class="particle" style="top: 20%; left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="top: 40%; left: 80%; animation-delay: 1s;"></div>
+        <div class="particle" style="top: 60%; left: 20%; animation-delay: 2s;"></div>
+        <div class="particle" style="top: 80%; left: 70%; animation-delay: 3s;"></div>
+        <div class="particle" style="top: 30%; left: 60%; animation-delay: 4s;"></div>
+    </div>
+    
+    <!-- Floating Elements -->
+    <div class="floating-element opacity-20">
+        <i class="fas fa-wrench text-white text-4xl"></i>
+    </div>
+    <div class="floating-element opacity-20">
+        <i class="fas fa-tools text-white text-3xl"></i>
+    </div>
+    <div class="floating-element opacity-20">
+        <i class="fas fa-cog text-white text-5xl"></i>
+    </div>
+    
+    <!-- Static Content -->
+    <div class="relative h-full flex items-center justify-center z-10">
+        <div class="hero-content max-w-7xl mx-auto px-4 text-center text-white">
+            <div class="glass-effect p-8 rounded-3xl mb-8">
+                <h1 id="hero-title" class="hero-title text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+                    Professional Plumbing Services
+                </h1>
+                <p class="hero-subtitle text-lg md:text-2xl mb-8 opacity-90">
+                    24/7 Emergency Service • Licensed & Insured • Fast Response
+                </p>
+            </div>
+            
+            <!-- Stats Counter -->
+            <div class="stats-container grid grid-cols-3 gap-4 mb-8 max-w-2xl mx-auto">
+                <div class="glass-effect p-4 rounded-xl">
+                    <div class="stat-number text-2xl md:text-3xl font-bold">500+</div>
+                    <div class="text-sm opacity-80">Happy Customers</div>
                 </div>
+                <div class="glass-effect p-4 rounded-xl">
+                    <div class="stat-number text-2xl md:text-3xl font-bold">24/7</div>
+                    <div class="text-sm opacity-80">Emergency Service</div>
+                </div>
+                <div class="glass-effect p-4 rounded-xl">
+                    <div class="stat-number text-2xl md:text-3xl font-bold">5★</div>
+                    <div class="text-sm opacity-80">Average Rating</div>
+                </div>
+            </div>
+            
+            <div class="hero-buttons flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{% url 'booking' %}" class="hero-btn-primary btn-advanced px-8 py-4 rounded-xl font-semibold text-primary-blue text-lg shadow-lg">
+                    <i class="fas fa-calendar-check mr-2"></i>Book Service Now
+                </a>
+                <a href="tel:+16475518342" class="hero-btn-secondary btn-advanced px-8 py-4 rounded-xl font-semibold text-white text-lg shadow-lg">
+                    <i class="fas fa-phone mr-2"></i>Emergency Call
+                </a>
             </div>
         </div>
     </div>
     
-    <!-- Slide 2 -->
-    <div class="hero-slide absolute inset-0 bg-cover bg-center bg-fixed transition-opacity duration-1000 opacity-0" style="background-image: url('{% static 'images/heroimage2.webp' %}')">
-        <div class="absolute inset-0 bg-black bg-opacity-60"></div>
-        <div class="relative h-full flex items-center justify-center">
-            <div class="max-w-7xl mx-auto px-4 text-center text-white">
-                <h1 class="text-6xl font-bold mb-6">Expert Plumbing Solutions</h1>
-                <p class="text-2xl mb-8">Trusted by Thousands • Quality Guaranteed • Same Day Service</p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="{% url 'booking' %}" class="bg-white text-primary-blue px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
-                        Schedule Today
-                    </a>
-                    <a href="{% url 'contact' %}" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary-blue transition">
-                        Get Free Quote
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Slide 3 -->
-    <div class="hero-slide absolute inset-0 bg-cover bg-center bg-fixed transition-opacity duration-1000 opacity-0" style="background-image: url('{% static 'images/heroimage3.webp' %}')">
-        <div class="absolute inset-0 bg-black bg-opacity-60"></div>
-        <div class="relative h-full flex items-center justify-center">
-            <div class="max-w-7xl mx-auto px-4 text-center text-white">
-                <h1 class="text-6xl font-bold mb-6">Reliable Emergency Service</h1>
-                <p class="text-2xl mb-8">Available 24/7 • Fast Response • Licensed Professionals</p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="tel:+16475518342" class="bg-red-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-red-700 transition">
-                        <i class="fas fa-phone mr-2"></i>Call Emergency
-                    </a>
-                    <a href="{% url 'booking' %}" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary-blue transition">
-                        Book Service
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Slide 4 -->
-    <div class="hero-slide absolute inset-0 bg-cover bg-center bg-fixed transition-opacity duration-1000 opacity-0" style="background-image: url('{% static 'images/heroimage4.webp' %}')">
-        <div class="absolute inset-0 bg-black bg-opacity-60"></div>
-        <div class="relative h-full flex items-center justify-center">
-            <div class="max-w-7xl mx-auto px-4 text-center text-white">
-                <h1 class="text-6xl font-bold mb-6">Complete Plumbing Solutions</h1>
-                <p class="text-2xl mb-8">Installation • Repair • Maintenance • All Services Covered</p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="{% url 'services' %}" class="bg-white text-primary-blue px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
-                        View All Services
-                    </a>
-                    <a href="{% url 'contact' %}" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary-blue transition">
-                        Get Quote
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Slide indicators -->
-    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
-        <button class="slide-indicator w-3 h-3 rounded-full bg-white opacity-50" data-slide="0"></button>
-        <button class="slide-indicator w-3 h-3 rounded-full bg-white opacity-50" data-slide="1"></button>
-        <button class="slide-indicator w-3 h-3 rounded-full bg-white opacity-50" data-slide="2"></button>
-        <button class="slide-indicator w-3 h-3 rounded-full bg-white opacity-50" data-slide="3"></button>
+
+    <!-- Enhanced Slide Indicators -->
+    <div class="slide-indicators absolute bottom-4 md:bottom-6 lg:bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3">
+        <button class="slide-indicator w-3 h-3 md:w-4 md:h-4 rounded-full transition-all duration-300 active" data-slide="0"></button>
+        <button class="slide-indicator w-3 h-3 md:w-4 md:h-4 rounded-full transition-all duration-300" data-slide="1"></button>
+        <button class="slide-indicator w-3 h-3 md:w-4 md:h-4 rounded-full transition-all duration-300" data-slide="2"></button>
+        <button class="slide-indicator w-3 h-3 md:w-4 md:h-4 rounded-full transition-all duration-300" data-slide="3"></button>
     </div>
 </section>
 
@@ -341,15 +334,39 @@
         </div>
         
         <!-- Review Actions -->
-        <div class="text-center mt-12 space-x-4">
-            <a href="{% url 'feedback' %}" class="inline-flex items-center bg-primary-blue text-white px-6 py-3 rounded-lg hover:bg-dark-blue transition">
+        <div class="text-center mt-12">
+            <a href="{% url 'feedback' %}" class="inline-flex items-center bg-primary-blue text-white px-6 py-3 rounded-lg hover:bg-dark-blue transition mb-4">
                 <i class="fas fa-star mr-2"></i>
                 Leave a Review
             </a>
-            <a href="#" class="inline-flex items-center bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition">
-                <i class="fab fa-google mr-2"></i>
-                View All Google Reviews
-            </a>
+            
+            <!-- Review Platform Links -->
+            <div class="flex flex-wrap justify-center gap-3 mt-4">
+                {% if google_business_url %}
+                <a href="{{ google_business_url }}" target="_blank" class="inline-flex items-center bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition text-sm">
+                    <i class="fab fa-google mr-2"></i>
+                    Google
+                </a>
+                {% endif %}
+                {% if yelp_url %}
+                <a href="{{ yelp_url }}" target="_blank" class="inline-flex items-center bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition text-sm">
+                    <i class="fab fa-yelp mr-2"></i>
+                    Yelp
+                </a>
+                {% endif %}
+                {% if trustpilot_url %}
+                <a href="{{ trustpilot_url }}" target="_blank" class="inline-flex items-center bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm">
+                    <i class="fas fa-shield-alt mr-2"></i>
+                    Trustpilot
+                </a>
+                {% endif %}
+                {% if reddit_url %}
+                <a href="{{ reddit_url }}" target="_blank" class="inline-flex items-center bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition text-sm">
+                    <i class="fab fa-reddit mr-2"></i>
+                    Reddit
+                </a>
+                {% endif %}
+            </div>
         </div>
         {% endif %}
     </div>

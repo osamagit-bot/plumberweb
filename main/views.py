@@ -47,6 +47,15 @@ def home(request):
     for area in service_areas:
         area.slug = slugify(area.name)
     
+    # Get review platform URLs (from first active service area)
+    google_business_url = yelp_url = trustpilot_url = reddit_url = None
+    if service_areas.exists():
+        first_area = service_areas.first()
+        google_business_url = first_area.google_business_url if first_area.google_business_url else None
+        yelp_url = first_area.yelp_url if first_area.yelp_url else None
+        trustpilot_url = first_area.trustpilot_url if first_area.trustpilot_url else None
+        reddit_url = first_area.reddit_url if first_area.reddit_url else None
+    
     context = {
         'services': services,
         'testimonials': testimonials,
@@ -54,6 +63,10 @@ def home(request):
         'total_reviews': rating_stats['total_reviews'],
         'faqs': faqs,
         'service_areas': service_areas,
+        'google_business_url': google_business_url,
+        'yelp_url': yelp_url,
+        'trustpilot_url': trustpilot_url,
+        'reddit_url': reddit_url,
     }
     return render(request, 'home.html', context)
 
