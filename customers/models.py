@@ -10,6 +10,14 @@ class CustomerProfile(models.Model):
     address = models.TextField(blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)
     postal_code = models.CharField(max_length=10, blank=True, null=True)
+    service_area = models.ForeignKey(
+        'areas.ServiceArea',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='customers',
+        help_text="Customer's service location"
+    )
     emergency_contact = models.CharField(max_length=100, blank=True, null=True)
     emergency_phone = models.CharField(max_length=20, blank=True, null=True)
     preferred_contact_method = models.CharField(

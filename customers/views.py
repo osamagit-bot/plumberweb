@@ -17,9 +17,8 @@ def register(request):
         form = CustomerRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
-            messages.success(request, 'Welcome! Your account has been created successfully.')
-            return redirect('customers:dashboard')
+            messages.success(request, 'Your account has been created successfully! Please login with your credentials.')
+            return redirect('customers:login')
     else:
         form = CustomerRegistrationForm()
     
@@ -161,6 +160,90 @@ def quote_detail(request, quote_id):
     return render(request, 'customers/quote_detail.html', {
         'quote': quote,
         'customer_profile': customer_profile
+    })
+
+
+@login_required
+def accept_quote(request, quote_id):
+    customer_profile, created = CustomerProfile.objects.get_or_create(user=request.user)
+    
+    quote = get_object_or_404(
+        QuoteRequest,
+        id=quote_id,
+        email=request.user.email,
+        status='quoted'
+    )
+    
+    if request.method == 'POST':
+        # Accept the quote
+        quote.status = 'accepted'
+        quote.save()
+        
+        # Redirect to quick booking with pre-filled data
+        messages.success(request, f'Quote accepted! Please schedule your {quote.service.name} service.')
+        return redirect('customers:book_from_quote', quote_id=quote.id)
+    
+    return redirect('customers:quote_detail', quote_id=quote_id)
+
+
+@login_required
+def book_from_quote(request, quote_id):
+    customer_profile, created = CustomerProfile.objects.get_or_create(user=request.user)
+    
+    quote = get_object_or_404(
+        QuoteRequest,
+        id=quote_id,
+        email=request.user.email,
+        status='accepted'
+    )
+    
+    if request.method == 'POST':
+        form = QuickBookingForm(request.POST)
+        if form.is_valid():
+            from datetime import datetime, time
+            from django.utils import timezone
+            
+            preferred_date = form.cleaned_data['preferred_date']
+            preferred_time_choice = form.cleaned_data['preferred_time']
+            
+            if preferred_time_choice == 'morning':
+                preferred_time = time(9, 0)
+            elif preferred_time_choice == 'afternoon':
+                preferred_time = time(14, 0)
+            else:
+                preferred_time = time(17, 0)
+                
+            preferred_datetime = timezone.make_aware(datetime.combine(preferred_date, preferred_time))
+            
+            # Create booking from accepted quote
+            booking = Booking.objects.create(
+                customer=customer_profile,
+                customer_name=customer_profile.full_name,
+                email=request.user.email,
+                phone=customer_profile.phone or '',
+                address=customer_profile.full_address or quote.address,
+                service=quote.service,
+                preferred_date=preferred_datetime,
+                urgency=form.cleaned_data.get('urgency', 'medium'),
+                description=f"Booking from accepted quote #{quote.id}. {form.cleaned_data.get('description', '')}",
+                status='pending'
+            )
+            
+            messages.success(request, f'Service booked successfully! Reference: #{booking.id}')
+            return redirect('customers:booking_detail', booking_id=booking.id)
+    else:
+        # Pre-fill form with quote data
+        initial_data = {
+            'service': quote.service.id,
+            'description': f'Service from accepted quote #{quote.id}'
+        }
+        form = QuickBookingForm(initial=initial_data)
+    
+    return render(request, 'customers/quick_booking.html', {
+        'form': form,
+        'customer_profile': customer_profile,
+        'quote': quote,
+        'from_quote': True
     })
 
 

@@ -103,6 +103,26 @@
                     {% endif %}
                 </div>
 
+                <!-- Service Area Field -->
+                <div>
+                    <label for="{{ form.service_area.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="fas fa-map-marker-alt mr-1 text-gray-400"></i>Service Location <span class="text-red-500">*</span>
+                    </label>
+                    <select name="{{ form.service_area.name }}" id="{{ form.service_area.id_for_label }}" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent transition duration-200 bg-gray-50 focus:bg-white" 
+                            required>
+                        {% for choice in form.service_area %}
+                            {{ choice.tag }}
+                        {% endfor %}
+                    </select>
+                    {% if form.service_area.help_text %}
+                        <p class="mt-1 text-xs text-gray-500">{{ form.service_area.help_text }}</p>
+                    {% endif %}
+                    {% if form.service_area.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.service_area.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
                 <!-- Password Fields -->
                 <div>
                     <label for="{{ form.password1.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">

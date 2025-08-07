@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_tailwind',
     'phonenumber_field',
+    'core',
     'main',
     'services',
     'bookings',
@@ -76,6 +77,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'core.context_processors.admin_notifications',
             ],
         },
     },
@@ -189,7 +191,40 @@ LOGIN_URL = '/portal/login/'
 LOGIN_REDIRECT_URL = '/portal/dashboard/'
 LOGOUT_REDIRECT_URL = '/'
 
-# Jazzmin settings
+JAZZMIN_SETTINGS = {
+    "site_title": "SPRO Plumbing Admin",
+    "site_header": "SPRO Plumbing",
+    "site_brand": "SPRO Plumbing Dashboard",
+    "welcome_sign": "Welcome to SPRO Plumbing Admin",
+    "copyright": "SPRO Plumbing Ltd",
+    "search_model": ["auth.User", "bookings.Booking", "main.GalleryImage"],
+    "topmenu_links": [
+        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "View Site", "url": "/", "new_window": True},
+    ],
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "order_with_respect_to": ["auth", "bookings", "services", "areas", "main", "blog", "quotes"],
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "bookings.Booking": "fas fa-calendar-check",
+        "services.Service": "fas fa-wrench",
+        "main.GalleryImage": "fas fa-images",
+        "blog.BlogPost": "fas fa-blog",
+        "quotes.QuoteCalculator": "fas fa-calculator",
+    },
+    "changeform_format": "horizontal_tabs",
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "brand_colour": "navbar-primary",
+    "accent": "accent-primary",
+    "navbar": "navbar-primary navbar-dark",
+    "sidebar": "sidebar-dark-primary",
+    "theme": "default",
+}
+
 # Logging Configuration
 LOGGING = {
     'version': 1,
@@ -285,94 +320,3 @@ SESSION_COOKIE_NAME = 'sessionid'
 ADMIN_SESSION_COOKIE_NAME = 'admin_sessionid'
 CUSTOMER_SESSION_COOKIE_NAME = 'customer_sessionid'
 
-JAZZMIN_SETTINGS = {
-    "site_title": "SPRO Plumbing Admin",
-    "site_header": "SPRO Plumbing",
-    "site_brand": "SPRO Plumbing Dashboard",
-    "site_logo": None,
-    "login_logo": None,
-    "login_logo_dark": None,
-    "site_logo_classes": "img-circle",
-    "site_icon": None,
-    "welcome_sign": "Welcome to SPRO Plumbing Admin",
-    "copyright": "SPRO Plumbing Ltd",
-    "search_model": ["auth.User", "bookings.Booking", "main.GalleryImage"],
-    "user_avatar": None,
-    "topmenu_links": [
-        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
-        {"name": "View Site", "url": "/", "new_window": True},
-    ],
-    "usermenu_links": [
-        {"model": "auth.user"}
-    ],
-    "show_sidebar": True,
-    "navigation_expanded": True,
-    "hide_apps": [],
-    "hide_models": [],
-    "order_with_respect_to": ["auth", "bookings", "services", "areas", "main", "blog", "quotes"],
-    "custom_links": {
-        "bookings": [{
-            "name": "View Bookings", 
-            "url": "admin:bookings_booking_changelist", 
-            "icon": "fas fa-calendar",
-            "permissions": ["bookings.view_booking"]
-        }]
-    },
-    "icons": {
-        "auth": "fas fa-users-cog",
-        "auth.user": "fas fa-user",
-        "auth.Group": "fas fa-users",
-        "bookings.Booking": "fas fa-calendar-check",
-        "bookings.ContactMessage": "fas fa-envelope",
-        "services.Service": "fas fa-wrench",
-        "services.Testimonial": "fas fa-star",
-        "services.FAQ": "fas fa-question-circle",
-        "areas.ServiceArea": "fas fa-map-marker-alt",
-        "main.GalleryImage": "fas fa-images",
-        "blog.BlogPost": "fas fa-blog",
-        "quotes.QuoteCalculator": "fas fa-calculator",
-        "quotes.QuoteRequest": "fas fa-file-invoice-dollar",
-    },
-    "default_icon_parents": "fas fa-chevron-circle-right",
-    "default_icon_children": "fas fa-circle",
-    "related_modal_active": False,
-    "custom_css": None,
-    "custom_js": None,
-    "use_google_fonts_cdn": True,
-    "show_ui_builder": False,
-    "changeform_format": "horizontal_tabs",
-    "changeform_format_overrides": {"auth.user": "collapsible", "auth.group": "vertical_tabs"},
-    "language_chooser": False,
-}
-
-JAZZMIN_UI_TWEAKS = {
-    "navbar_small_text": False,
-    "footer_small_text": False,
-    "body_small_text": False,
-    "brand_small_text": False,
-    "brand_colour": "navbar-primary",
-    "accent": "accent-primary",
-    "navbar": "navbar-primary navbar-dark",
-    "no_navbar_border": False,
-    "navbar_fixed": False,
-    "layout_boxed": False,
-    "footer_fixed": False,
-    "sidebar_fixed": False,
-    "sidebar": "sidebar-dark-primary",
-    "sidebar_nav_small_text": False,
-    "sidebar_disable_expand": False,
-    "sidebar_nav_child_indent": False,
-    "sidebar_nav_compact_style": False,
-    "sidebar_nav_legacy_style": False,
-    "sidebar_nav_flat_style": False,
-    "theme": "default",
-    "dark_mode_theme": None,
-    "button_classes": {
-        "primary": "btn-primary",
-        "secondary": "btn-secondary",
-        "info": "btn-info",
-        "warning": "btn-warning",
-        "danger": "btn-danger",
-        "success": "btn-success"
-    }
-}

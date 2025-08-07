@@ -44,6 +44,8 @@ urlpatterns = [
     # Quotes
     path('quotes/', views.quotes, name='quotes'),
     path('quotes/<int:quote_id>/', views.quote_detail, name='quote_detail'),
+    path('quotes/<int:quote_id>/accept/', views.accept_quote, name='accept_quote'),
+    path('quotes/<int:quote_id>/book/', views.book_from_quote, name='book_from_quote'),
     
     # Service History
     path('service-history/', views.service_history, name='service_history'),

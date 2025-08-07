@@ -1,4 +1,5 @@
 {% extends 'customers/base.html' %}
+{% load static %}
 
 {% block title %}My Quotes - Customer Portal{% endblock %}
 
@@ -141,6 +142,7 @@
     </div>
 </div>
 
+{% csrf_token %}
 <script>
 function showToast(message, type = 'info') {
     const toast = document.getElementById('toast');
@@ -190,8 +192,24 @@ function hideConfirmModal() {
 }
 
 function acceptQuote(quoteId) {
-    showConfirmModal('Are you sure you want to accept this quote?', () => {
-        showToast('Quote acceptance feature will be implemented soon. Please contact us directly to accept.', 'warning');
+    showConfirmModal('Are you sure you want to accept this quote? You will be redirected to schedule the service.', () => {
+        // Create a form and submit it
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/portal/quotes/${quoteId}/accept/`;
+        
+        // Add CSRF token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+        if (csrfToken) {
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = csrfToken.value;
+            form.appendChild(csrfInput);
+        }
+        
+        document.body.appendChild(form);
+        form.submit();
     });
 }
 </script>

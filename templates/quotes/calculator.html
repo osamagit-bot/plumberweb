@@ -70,13 +70,17 @@
 
 <!-- Success Modal -->
 <div id="success-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-lg p-8 max-w-md mx-4 transform transition-all duration-300 scale-95 opacity-0" id="modal-content">
+    <div class="bg-white rounded-lg p-8 max-w-lg mx-4 transform transition-all duration-300 scale-95 opacity-0" id="modal-content">
         <div class="text-center">
             <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
                 <i class="fas fa-check text-green-600 text-xl"></i>
             </div>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">Quote Request Submitted!</h3>
-            <p class="text-sm text-gray-500 mb-6">Thank you for your request. We'll contact you within 24 hours with a detailed quote.</p>
+            <h3 class="text-lg font-medium text-gray-900 mb-4">🎉 Quote Request Submitted Successfully!</h3>
+            <div class="text-sm text-gray-600 mb-6 text-left space-y-2">
+                <p>📧 Check your email for confirmation details</p>
+                <p>👤 <strong>Track your quote:</strong> <a href="/portal/login/" class="text-blue-600 hover:underline font-semibold">Access Customer Portal</a> to view quote status and history</p>
+                <p>📞 We will contact you within 24 hours with a detailed quote</p>
+            </div>
             <button onclick="closeSuccessModal()" class="w-full bg-primary-blue text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">
                 Close
             </button>
@@ -175,9 +179,25 @@ function hideCalculator() {
     document.getElementById('submit-quote').disabled = true;
 }
 
-function showSuccessModal() {
+function showSuccessModal(emailSent = false) {
     const modal = document.getElementById('success-modal');
     const content = document.getElementById('modal-content');
+    
+    // Update the message based on email status
+    const messageContainer = content.querySelector('.text-left.space-y-2');
+    if (emailSent) {
+        messageContainer.innerHTML = `
+            <p>📧 Check your email for confirmation details</p>
+            <p>👤 <strong>Track your quote:</strong> <a href="/portal/login/" class="text-blue-600 hover:underline font-semibold">Access Customer Portal</a> to view quote status and history</p>
+            <p>📞 We will contact you within 24 hours with a detailed quote</p>
+        `;
+    } else {
+        messageContainer.innerHTML = `
+            <p>👤 <strong>Track your quote:</strong> <a href="/portal/login/" class="text-blue-600 hover:underline font-semibold">Create an account</a> in our Customer Portal to view quote status</p>
+            <p>📞 We will contact you within 24 hours with a detailed quote</p>
+        `;
+    }
+    
     modal.classList.remove('hidden');
     setTimeout(() => {
         content.classList.remove('scale-95', 'opacity-0');
@@ -269,7 +289,7 @@ document.getElementById('quote-form').addEventListener('submit', async function(
         hideLoading();
         
         if (result.success) {
-            showSuccessModal();
+            showSuccessModal(result.email_sent);
             this.reset();
             hideCalculator();
             selectedOptions = [];

@@ -32,15 +32,18 @@ class CustomerDocumentInline(admin.TabularInline):
 
 @admin.register(CustomerProfile)
 class CustomerProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'phone', 'city', 'preferred_contact_method', 'created_at')
-    list_filter = ('preferred_contact_method', 'email_notifications', 'sms_notifications', 'created_at')
-    search_fields = ('user__username', 'user__email', 'user__first_name', 'user__last_name', 'phone')
+    list_display = ('user', 'phone', 'service_area', 'city', 'preferred_contact_method', 'created_at')
+    list_filter = ('service_area', 'preferred_contact_method', 'email_notifications', 'sms_notifications', 'created_at')
+    search_fields = ('user__username', 'user__email', 'user__first_name', 'user__last_name', 'phone', 'service_area__name')
     readonly_fields = ('created_at', 'updated_at')
     inlines = [CustomerNoteInline, CustomerDocumentInline]
     
     fieldsets = (
         ('User Information', {
             'fields': ('user',)
+        }),
+        ('Location Information', {
+            'fields': ('service_area',)
         }),
         ('Contact Information', {
             'fields': ('phone', 'address', 'city', 'postal_code')

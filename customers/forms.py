@@ -19,13 +19,24 @@ class CustomerRegistrationForm(UserCreationForm):
         }),
         help_text="Enter a valid Canadian phone number"
     )
+    service_area = forms.ModelChoiceField(
+        queryset=None,  # Will be set in __init__
+        required=True,
+        empty_label="Select your location",
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        help_text="Choose your service area location"
+    )
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'phone', 'password1', 'password2')
+        fields = ('username', 'first_name', 'last_name', 'email', 'phone', 'service_area', 'password1', 'password2')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Set service area queryset
+        from areas.models import ServiceArea
+        self.fields['service_area'].queryset = ServiceArea.objects.filter(is_active=True).order_by('name')
+        
         self.fields['username'].help_text = 'Choose a unique username'
         self.fields['password1'].help_text = 'Your password must contain at least 8 characters'
         self.fields['password2'].help_text = 'Enter the same password as before'
@@ -48,10 +59,11 @@ class CustomerRegistrationForm(UserCreationForm):
         
         if commit:
             user.save()
-            # Create customer profile with cleaned phone number
+            # Create customer profile with cleaned phone number and service area
             CustomerProfile.objects.create(
                 user=user,
-                phone=self.cleaned_data.get('phone', '')
+                phone=self.cleaned_data.get('phone', ''),
+                service_area=self.cleaned_data.get('service_area')
             )
         return user
 
@@ -77,11 +89,18 @@ class CustomerProfileForm(forms.ModelForm):
         }),
         help_text="Enter a valid Canadian emergency contact phone number"
     )
+    service_area = forms.ModelChoiceField(
+        queryset=None,  # Will be set in __init__
+        required=False,
+        empty_label="Select your location",
+        widget=forms.Select(),
+        help_text="Choose your service area location"
+    )
 
     class Meta:
         model = CustomerProfile
         fields = [
-            'address', 'city', 'postal_code',
+            'service_area', 'address', 'city', 'postal_code',
             'emergency_contact',
             'preferred_contact_method', 'email_notifications', 'sms_notifications'
         ]
@@ -92,10 +111,17 @@ class CustomerProfileForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Set service area queryset
+        from areas.models import ServiceArea
+        self.fields['service_area'].queryset = ServiceArea.objects.filter(is_active=True).order_by('name')
+        
         if self.instance and self.instance.user:
             self.fields['first_name'].initial = self.instance.user.first_name
             self.fields['last_name'].initial = self.instance.user.last_name
             self.fields['email'].initial = self.instance.user.email
+            # Set phone field initials from instance
+            self.fields['phone'].initial = self.instance.phone
+            self.fields['emergency_phone'].initial = self.instance.emergency_phone
 
         # Add CSS classes for Tailwind styling
         base_input_class = 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent transition duration-200 bg-gray-50 focus:bg-white'
@@ -133,9 +159,7 @@ class CustomerProfileForm(forms.ModelForm):
             profile.user.email = self.cleaned_data['email']
             profile.user.save()
             
-            # Update phone fields with cleaned data
-            profile.phone = self.cleaned_data.get('phone', '')
-            profile.emergency_phone = self.cleaned_data.get('emergency_phone', '')
+            # Save the profile (phone fields are already handled by ModelForm)
             profile.save()
         return profile
 

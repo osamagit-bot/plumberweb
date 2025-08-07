@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quote Request Confirmation - SPRO Plumbing</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #1e40af;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+        .content {
+            background-color: #f8fafc;
+            padding: 30px;
+            border-radius: 0 0 8px 8px;
+        }
+        .quote-details {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #1e40af;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #1e40af;
+        }
+        .cta-button {
+            display: inline-block;
+            background-color: #1e40af;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            color: #64748b;
+        }
+        .emergency-notice {
+            background-color: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎉 Quote Request Confirmed!</h1>
+        <p>Thank you for choosing SPRO Plumbing</p>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ quote_request.customer_name }},</p>
+        
+        <p>We've successfully received your quote request for <strong>{{ quote_request.service.name }}</strong>. Our team will review your requirements and contact you within 24 hours with a detailed quote.</p>
+        
+        <div class="quote-details">
+            <h3>📋 Quote Request Details</h3>
+            <div class="detail-row">
+                <span>Service:</span>
+                <span>{{ quote_request.service.name }}</span>
+            </div>
+            <div class="detail-row">
+                <span>Address:</span>
+                <span>{{ quote_request.address }}</span>
+            </div>
+            <div class="detail-row">
+                <span>Phone:</span>
+                <span>{{ quote_request.phone }}</span>
+            </div>
+            {% if quote_request.notes %}
+            <div class="detail-row">
+                <span>Notes:</span>
+                <span>{{ quote_request.notes }}</span>
+            </div>
+            {% endif %}
+            <div class="detail-row">
+                <span>Estimated Total:</span>
+                <span>${{ quote_request.estimated_total|floatformat:2 }}</span>
+            </div>
+        </div>
+        
+        <p><strong>👤 Track Your Quote:</strong> Create an account in our Customer Portal to view quote status and history:</p>
+        <a href="{{ request.build_absolute_uri }}/portal/login/" class="cta-button">Access Customer Portal</a>
+        
+        <div class="emergency-notice">
+            <strong>🚨 Emergency Service Needed?</strong><br>
+            For urgent plumbing emergencies, call us immediately at <strong>(647) 551-8342</strong>
+        </div>
+        
+        <p><strong>What happens next?</strong></p>
+        <ul>
+            <li>📞 We'll call you at {{ quote_request.phone }} within 24 hours</li>
+            <li>📋 We'll discuss your specific requirements in detail</li>
+            <li>💰 You'll receive a comprehensive written quote</li>
+            <li>📅 We'll schedule your service at your convenience</li>
+        </ul>
+        
+        <p>Thank you for trusting SPRO Plumbing with your plumbing needs. We look forward to serving you!</p>
+        
+        <p>Best regards,<br>
+        <strong>The SPRO Plumbing Team</strong></p>
+    </div>
+    
+    <div class="footer">
+        <p>SPRO Plumbing - Professional Plumbing Services<br>
+        📞 (647) 551-8342 | 📧 info@sproplumbing.com<br>
+        🌐 www.sproplumbing.com</p>
+        
+        <p><small>This is an automated confirmation email. Please do not reply to this email.</small></p>
+    </div>
+</body>
+</html>

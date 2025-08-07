@@ -3,7 +3,11 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from services.models import Service
 from .models import QuoteCalculator, QuoteRequest
+from core.email_utils import send_quote_confirmation_email, send_admin_quote_notification
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def quote_calculator(request):
@@ -45,5 +49,19 @@ def submit_quote_request(request):
             estimated_total=data['estimated_total'],
             notes=data.get('notes', ''),
         )
-        return JsonResponse({'success': True, 'quote_id': quote_request.id})
+        
+        # Send confirmation email to customer
+        try:
+            email_sent = send_quote_confirmation_email(quote_request)
+            admin_notified = send_admin_quote_notification(quote_request)
+            logger.info(f'Quote request created: {quote_request.id}')
+        except Exception as e:
+            logger.error(f'Email sending failed for quote {quote_request.id}: {str(e)}')
+            email_sent = False
+        
+        return JsonResponse({
+            'success': True, 
+            'quote_id': quote_request.id,
+            'email_sent': email_sent
+        })
     return JsonResponse({'success': False})

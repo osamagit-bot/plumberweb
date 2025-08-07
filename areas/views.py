@@ -94,10 +94,15 @@ def location_booking(request, location_slug):
             except Exception as e:
                 email_sent = False
             
+            # Create enhanced success message with portal information
+            portal_link = request.build_absolute_uri('/portal/login/')
+            
             if email_sent:
-                messages.success(request, f'Booking request submitted for {service_area.name}! Check your email for confirmation. We will contact you soon.')
+                success_message = f'Booking request submitted successfully for {service_area.name}! Check your email for confirmation. Visit our Customer Portal at {portal_link} to track your booking status. We will contact you soon to confirm your appointment.'
             else:
-                messages.success(request, f'Booking request submitted for {service_area.name}! We will contact you soon.')
+                success_message = f'Booking request submitted successfully for {service_area.name}! Create an account in our Customer Portal at {portal_link} to track your booking status. We will contact you soon to confirm your appointment.'
+            
+            messages.success(request, success_message)
             return redirect('location_booking', location_slug=slugify(service_area.name))
         else:
             # Form has validation errors
@@ -139,10 +144,15 @@ def location_contact(request, location_slug):
             except Exception as e:
                 email_sent = False
             
+            # Create enhanced success message with portal information
+            portal_link = request.build_absolute_uri('/portal/login/')
+            
             if email_sent:
-                messages.success(request, f'Message sent successfully from {service_area.name}! Check your email for confirmation. We will get back to you soon.')
+                success_message = f'Message sent successfully from {service_area.name}! Check your email for confirmation. Visit our Customer Portal at {portal_link} to track communications. We will get back to you soon.'
             else:
-                messages.success(request, f'Message sent successfully from {service_area.name}! We will get back to you soon.')
+                success_message = f'Message sent successfully from {service_area.name}! Create an account in our Customer Portal at {portal_link} to track communications. We will get back to you soon.'
+            
+            messages.success(request, success_message)
             return redirect('location_contact', location_slug=slugify(service_area.name))
         else:
             # Form has validation errors

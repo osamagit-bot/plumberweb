@@ -107,16 +107,15 @@ def booking_view(request):
                 logger.error(f'Email sending failed for booking {booking.id}: {str(e)}')
                 email_sent = False
             
+            # Create enhanced success message with portal information
+            portal_link = request.build_absolute_uri('/portal/login/')
+            
             if email_sent:
-                messages.success(
-                    request, 
-                    'Booking request submitted successfully! Check your email for confirmation details. We will contact you soon.'
-                )
+                success_message = f'Booking request submitted successfully! Check your email for confirmation details. Visit our Customer Portal at {portal_link} to track your booking status. We will contact you soon to confirm your appointment.'
             else:
-                messages.success(
-                    request, 
-                    'Booking request submitted successfully! We will contact you soon.'
-                )
+                success_message = f'Booking request submitted successfully! Create an account in our Customer Portal at {portal_link} to track your booking status. We will contact you soon to confirm your appointment.'
+            
+            messages.success(request, success_message)
             return redirect('main:booking')
         else:
             messages.error(
@@ -151,16 +150,15 @@ def contact_view(request):
                 logger.error(f'Email sending failed for contact {contact_message.id}: {str(e)}')
                 email_sent = False
             
+            # Create enhanced success message with portal information
+            portal_link = request.build_absolute_uri('/portal/login/')
+            
             if email_sent:
-                messages.success(
-                    request, 
-                    'Message sent successfully! Check your email for confirmation. We will get back to you soon.'
-                )
+                success_message = f'Message sent successfully! Check your email for confirmation. Visit our Customer Portal at {portal_link} to track communications. We will get back to you soon.'
             else:
-                messages.success(
-                    request, 
-                    'Message sent successfully! We will get back to you soon.'
-                )
+                success_message = f'Message sent successfully! Create an account in our Customer Portal at {portal_link} to track communications. We will get back to you soon.'
+            
+            messages.success(request, success_message)
             return redirect('main:contact')
         else:
             messages.error(
