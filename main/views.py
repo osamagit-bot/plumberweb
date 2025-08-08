@@ -220,10 +220,11 @@ def feedback_view(request):
             feedback.is_approved = False  # Require admin approval
             feedback.save()
             
-            messages.success(
-                request, 
-                'Thank you for your feedback! Your review has been submitted and will be published after approval.'
-            )
+            # Create enhanced success message with portal information
+            portal_link = request.build_absolute_uri('/portal/login/')
+            success_message = f'Thank you for your feedback! Your review has been submitted and will be published after approval. Visit our Customer Portal at {portal_link} to track your submissions and communications with us.'
+            
+            messages.success(request, success_message)
             return redirect('main:feedback')
         else:
             messages.error(
